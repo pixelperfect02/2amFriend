@@ -5,25 +5,26 @@ import { ImageBackground, StyleSheet, TouchableOpacity, View } from 'react-nativ
 export default function MainScreen() {
   const router = useRouter();
 
-  // Temporary dummy function for navigation
   const handlePress = () => {
     console.log("Sign Up pressed");
-    // For now, replace with a dummy action or real navigation once the page is set
     router.replace('/sign-up');
   };
 
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('../assets/images/home.png')}  // Use home.png
+        source={require('../assets/images/home.png')}
         style={styles.background}
-        resizeMode="contain" // 'contain' will scale the image to fit within the box without stretching
+        resizeMode="contain"
       >
         <View style={styles.arrowContainer}>
-          <TouchableOpacity onPress={handlePress} style={styles.touchableOpacity}>
+          <TouchableOpacity 
+            onPress={handlePress} 
+            style={styles.touchableOpacity}
+            activeOpacity={0.7}
+          >
             <View style={styles.circle}>
-              <AntDesign name="arrowright" size={40} color="black" />
-              {/* <Text style={styles.buttonText}>Sign Up</Text> */}
+              <AntDesign name="arrowright" size={35} color="#003B8B" />
             </View>
           </TouchableOpacity>
         </View>
@@ -35,41 +36,39 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white', // Set the background color to white
+    backgroundColor: '#003B8B', // Navy blue background
   },
   background: {
     flex: 1,
-    justifyContent: 'flex-start',  // Align the content to the top
-    width: '100%', // Full width
-    height: '100%', // Full height
-    position: 'relative', // Allow absolute positioning of image within the container
-    top: -90, // Move the image upwards by 90 units
+    justifyContent: 'flex-start',
+    width: '100%',
+    height: '100%',
+    marginTop: -80, // Negative margin to move image up
   },
   arrowContainer: {
     position: 'absolute',
-    bottom: 40, // Position it 40px from the bottom
-    left: '52%', // Center the arrow horizontally
-    marginLeft: -40, // Offset by half of the button width (40px) to center it
-    alignItems: 'center', // Align children to the center
+    bottom: '10%', // Adjusted for better positioning
+    left: '50%',
+    marginLeft: -30,
+    alignItems: 'center',
   },
   touchableOpacity: {
-    flexDirection: 'row', // Arrange the arrow and text horizontally
-    alignItems: 'center', // Align the arrow and text vertically
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   circle: {
-    backgroundColor: 'white',
-    borderRadius: 30, // Make it a circle
-    padding: 10,
+    backgroundColor: '#FFD700', // Gold color to match SignUpScreen
+    borderRadius: 30,
+    width: 60,
+    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
     borderWidth: 2,
-    borderColor: 'black',
-  },
-  buttonText: {
-    fontSize: 16,
-    marginLeft: 8,
-    fontWeight: 'bold',
-    color: 'black',
+    borderColor: '#003B8B', // Navy blue border
+    elevation: 5, // Added shadow for depth
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
 });

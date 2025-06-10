@@ -1,16 +1,27 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Alert,
+  Dimensions,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 const options = [
-  'Job related',
-  'Love Life related',
-  'Passion following related',
-  'Loneliness in a foreign place/country',
-  'Business not doing well',
-  'Marriage related',
-  'Sexuality and Sexual Orientation related',
+  { text: 'Job related', emoji: '💼' },
+  { text: 'Love Life related', emoji: '💔' },
+  { text: 'Passion following related', emoji: '🔥' },
+  { text: 'Loneliness in a foreign place/country', emoji: '🌏' },
+  { text: 'Business not doing well', emoji: '📉' },
+  { text: 'Marriage related', emoji: '💍' },
+  { text: 'Sexuality and Sexual Orientation related', emoji: '🏳️‍🌈' },
 ];
 
 export default function TopicSelectionScreen() {
@@ -33,43 +44,46 @@ export default function TopicSelectionScreen() {
     if (selected.length === 0) {
       Alert.alert('Selection Required', 'Please select at least one topic.');
     } else {
-      // Navigate to the find-match screen
       router.push('/find-match');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Choose minimum one, maximum three:</Text>
+      <Text style={styles.header}>Choose Your Struggles</Text>
+      <Text style={styles.subheader}>Choose 1–3 that resonate most or atleast 1 to continue</Text>
 
       <FlatList
         contentContainerStyle={styles.listContainer}
         data={options}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.text}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[
               styles.option,
-              selected.includes(item) && styles.optionSelected,
+              selected.includes(item.text) && styles.optionSelected,
             ]}
-            onPress={() => toggleSelection(item)}
+            onPress={() => toggleSelection(item.text)}
           >
             <Text
               style={[
                 styles.optionText,
-                selected.includes(item) && styles.optionTextSelected,
+                selected.includes(item.text) && styles.optionTextSelected,
               ]}
             >
-              {item}
+              {item.emoji}  {item.text}
             </Text>
           </TouchableOpacity>
         )}
+        showsVerticalScrollIndicator={false}
       />
+
+
 
       <View style={styles.arrowContainer}>
         <TouchableOpacity onPress={handleNext}>
           <View style={styles.circle}>
-            <AntDesign name="arrowright" size={35} color="black" />
+            <AntDesign name="arrowright" size={28} color="#003B8B" />
           </View>
         </TouchableOpacity>
       </View>
@@ -77,57 +91,95 @@ export default function TopicSelectionScreen() {
   );
 }
 
+const baseFontSize = width < 375 ? 14 : width < 430 ? 16 : 18;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 30,
-    paddingTop: 80,
+    backgroundColor: '#003B8B',
+    paddingHorizontal: width * 0.06,
+    paddingTop: height * 0.12,
   },
   header: {
-    fontSize: 22,
+    fontSize: baseFontSize + 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
+    color: 'white',
+    marginBottom: 8,
+  },
+  subheader: {
+    fontSize: baseFontSize - 3,
+    textAlign: 'center',
+    color: 'white',
+    marginBottom: 24,
   },
   listContainer: {
-    paddingBottom: 150,
+    paddingBottom: height * 0.18,
   },
   option: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    backgroundColor: '#f2f2f2',
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'rgba(0, 59, 139, 0.3)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   optionSelected: {
-    backgroundColor: '#ffe5cc',
-    borderColor: '#ff9900',
+    backgroundColor: '#FFD700',
+    borderColor: '#003B8B',
+    borderWidth: 2,
   },
   optionText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: baseFontSize,
+    color: '#003B8B',
   },
   optionTextSelected: {
-    color: '#994d00',
-    fontWeight: 'bold',
+    fontWeight: '600',
+  },
+  noteText: {
+    color: 'white',
+    fontSize: baseFontSize - 2,
+    textAlign: 'center',
+    marginTop: 10,
   },
   arrowContainer: {
     position: 'absolute',
-    bottom: 100,
-    left: '60%',
-    marginLeft: -40,
+    bottom: height * 0.06,
+    left: '50%',
+    marginLeft: 1,
     alignItems: 'center',
   },
   circle: {
-    backgroundColor: 'white',
-    borderColor: 'black',
+    backgroundColor: '#FFD700',
+    borderColor: '#003B8B',
     borderWidth: 2,
-    borderRadius: 40,
-    padding: 15,
+    borderRadius: 30,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
 });

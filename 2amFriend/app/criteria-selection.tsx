@@ -1,16 +1,26 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Dimensions,
+  FlatList,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
+const { width, height } = Dimensions.get('window');
 
 const options = [
-  'Similar Struggles',
-  'Similar Trauma',
-  'Similar Mental Health State',
-  'Similar Culture',
-  'Similar Personality/Mindset',
-  'Similar Life Experiences',
-  'Have lost a family member or friend',
+  { text: 'Similar Struggles', emoji: '🤝' },
+  { text: 'Similar Trauma', emoji: '💔' },
+  { text: 'Similar Mental Health State', emoji: '🧠' },
+  { text: 'Similar Culture', emoji: '🌍' },
+  { text: 'Similar Mindset', emoji: '💡' },
+  { text: 'Similar Life Experiences', emoji: '📖' },
+  { text: 'Have lost a family member or friend', emoji: '👼' },
 ];
 
 export default function CriteriaSelectionScreen() {
@@ -23,40 +33,42 @@ export default function CriteriaSelectionScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Connect with a friend based on:</Text>
+      <Text style={styles.header}>Find Your Connection:</Text>
+      <Text style={styles.subheader}>What brings you here?</Text>
 
       <FlatList
         contentContainerStyle={styles.listContainer}
         data={options}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.text}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[
               styles.option,
-              selected === item && styles.optionSelected,
+              selected === item.text && styles.optionSelected,
             ]}
-            onPress={() => toggleSelection(item)}
+            onPress={() => toggleSelection(item.text)}
           >
             <Text
               style={[
                 styles.optionText,
-                selected === item && styles.optionTextSelected,
+                selected === item.text && styles.optionTextSelected,
               ]}
             >
-              {item}
+              {item.emoji}  {item.text}
             </Text>
           </TouchableOpacity>
         )}
+        showsVerticalScrollIndicator={false}
       />
 
-      {/* Bottom Arrow Button */}
       <View style={styles.arrowContainer}>
         <TouchableOpacity
           onPress={() => router.push('/topic-selection')}
-          disabled={!selected} // Optional: disable navigation unless one is selected
+          disabled={!selected}
+          activeOpacity={0.7}
         >
           <View style={styles.circle}>
-            <AntDesign name="arrowright" size={35} color="black" />
+            <AntDesign name="arrowright" size={28} color="#003B8B" />
           </View>
         </TouchableOpacity>
       </View>
@@ -64,57 +76,89 @@ export default function CriteriaSelectionScreen() {
   );
 }
 
+const baseFontSize = width < 375 ? 14 : width < 430 ? 16 : 18;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    paddingHorizontal: 30,
-    paddingTop: 90,
+    backgroundColor: '#003B8B',
+    paddingHorizontal: width * 0.06,
+    paddingTop: height * 0.12,
   },
   header: {
-    fontSize: 22,
+    fontSize: baseFontSize + 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
+    color: 'white',
+    marginBottom: 8,
+  },
+  subheader: {
+    fontSize: baseFontSize + 2,
+    textAlign: 'center',
+    color: 'white',
+    marginBottom: 24,
   },
   listContainer: {
-    paddingBottom: 150,
+    paddingBottom: height * 0.18,
   },
   option: {
-    paddingVertical: 15,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-    backgroundColor: '#f2f2f2',
+    paddingVertical: height * 0.02,
+    paddingHorizontal: width * 0.05,
+    borderRadius: 30,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'rgba(0, 59, 139, 0.3)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
   optionSelected: {
-    backgroundColor: '#cce5ff',
-    borderColor: '#3399ff',
+    backgroundColor: '#FFD700',
+    borderColor: '#003B8B',
+    borderWidth: 2,
   },
   optionText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: baseFontSize,
+    color: '#003B8B',
   },
   optionTextSelected: {
-    color: '#004080',
-    fontWeight: 'bold',
+    fontWeight: '600',
   },
   arrowContainer: {
     position: 'absolute',
-    bottom: 120,
-    left: '60%',
-    marginLeft: -40,
+    bottom: height * 0.08,
+    left: '50%',
+    marginLeft: 1,
     alignItems: 'center',
   },
   circle: {
-    backgroundColor: 'white',
-    borderColor: 'black',
+    backgroundColor: '#FFD700',
+    borderColor: '#003B8B',
     borderWidth: 2,
-    borderRadius: 40,
-    padding: 15,
+    borderRadius: 30,
+    width: 60,
+    height: 60,
     alignItems: 'center',
     justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 5,
+      },
+    }),
   },
 });
