@@ -1,144 +1,262 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Simulated dating profiles
 const profiles = [
   {
     id: '1',
     name: 'Liam Nguyen',
     age: 28,
-    emoji: '📚',
-    bio: 'Coffee lover & deep thinker.',
-    details: 'Engineer by day, philosopher by night. Always looking for the next great book and conversation.',
+    bio: 'Avid reader and thoughtful conversationalist.',
+    details: 'Software engineer with a passion for literature and meaningful discussions over coffee.',
+    photo: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=500&q=80',
+    goodKarmaPoints: 120,
+    thankYouNotes: 15,
+    status: 'Active Member',
+    loveLanguages: ['Words of Affirmation', 'Quality Time'],
+    interests: ['Reading', 'Coffee', 'Technology'],
+    location: 'San Francisco, CA',
   },
   {
     id: '2',
     name: 'Maya Patel',
     age: 25,
-    emoji: '🐶',
-    bio: 'Dog mom & nature girl.',
-    details: 'Vegan baker and weekend hiker. Bonus points if you love animals and campfires.',
-  },
-  {
-    id: '3',
-    name: 'Ethan Ross',
-    age: 32,
-    emoji: '🎧',
-    bio: 'Podcaster & mystery nerd.',
-    details: 'I make cyber-sec boring stories sound cool. Ask me about the dark web… or tacos.',
-  },
-  {
-    id: '4',
-    name: 'Zara Ahmed',
-    age: 29,
-    emoji: '🎨',
-    bio: 'Painter of walls & souls.',
-    details: 'Traveling muralist. My love language is playlists and rooftop sunsets.',
-  },
-  {
-    id: '5',
-    name: 'Chris Johnson',
-    age: 30,
-    emoji: '⛰️',
-    bio: 'Adrenaline junkie.',
-    details: 'Rock climber, skydiver, deep thinker. Let’s chase sunrises together.',
-  },
-  {
-    id: '6',
-    name: 'Aria Chen',
-    age: 26,
-    emoji: '🕯️',
-    bio: 'Candle maker & journaler.',
-    details: 'I believe in slow mornings, warm tea, and heartfelt talks under fairy lights.',
+    bio: 'Nature enthusiast and animal lover.',
+    details: 'Vegan baker who enjoys hiking and connecting with fellow adventurers.',
+    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80',
+    goodKarmaPoints: 200,
+    thankYouNotes: 40,
+    status: 'Premium Member',
+    loveLanguages: ['Receiving Gifts', 'Acts of Service'],
+    interests: ['Baking', 'Hiking', 'Animals'],
+    location: 'Portland, OR',
   },
 ];
 
+const loveLanguageIcons = {
+  'Words of Affirmation': () => <AntDesign name="message1" size={20} color="white" />,
+  'Quality Time': () => <MaterialCommunityIcons name="clock-time-four" size={20} color="white" />,
+  'Receiving Gifts': () => <MaterialCommunityIcons name="gift" size={20} color="white" />,
+  'Acts of Service': () => <MaterialCommunityIcons name="hand-heart" size={20} color="white" />,
+  'Physical Touch': () => <MaterialCommunityIcons name="hand-wave" size={20} color="white" />,
+};
+
 export default function PotentialProfilesScreen() {
+  const router = useRouter();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const profile = profiles[currentIndex];
+
+  const nextProfile = () => {
+    if (currentIndex < profiles.length - 1) setCurrentIndex(currentIndex + 1);
+  };
+  const prevProfile = () => {
+    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>💞 People You Might Like</Text>
-      <FlatList
-        data={profiles}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.info}>
-              <Text style={styles.name}>
-                {item.emoji} {item.name}, {item.age}
-              </Text>
-              <Text style={styles.bio}>{item.bio}</Text>
-              <Text style={styles.details}>{item.details}</Text>
-            </View>
-          </TouchableOpacity>
-        )}
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+        <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
+      {/* Large Square Profile Image */}
+      <Image
+        source={{ uri: profile.photo }}
+        style={styles.profileImage}
+        resizeMode="cover"
       />
-    </View>
+
+      <View style={styles.profileCard}>
+        <Text style={styles.name}>
+          {profile.name}, {profile.age}
+        </Text>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>About Me</Text>
+          <Text style={styles.text}>{profile.bio}</Text>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>More Details</Text>
+          <Text style={styles.text}>{profile.details}</Text>
+        </View>
+
+        {/* Love Languages Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Love Languages</Text>
+          <View style={styles.loveLanguagesContainer}>
+            {profile.loveLanguages.map((lang, idx) => (
+              <View key={idx} style={styles.loveLanguageItem}>
+                {/* {loveLanguageIcons[lang]()} */}
+                <Text style={styles.loveLanguageText}>{lang}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.sectionRow}>
+          <View style={styles.leftCol}>
+            <Text style={styles.sectionTitle}>Location</Text>
+            <Text style={styles.text}>{profile.location}</Text>
+          </View>
+          <View style={styles.rightCol}>
+            <Text style={styles.sectionTitle}>Status</Text>
+            <Text style={styles.text}>{profile.status}</Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionRow}>
+          <View style={styles.leftCol}>
+            <Text style={styles.sectionTitle}>Good Karma Points</Text>
+            <Text style={styles.text}>{profile.goodKarmaPoints}</Text>
+          </View>
+          <View style={styles.rightCol}>
+            <Text style={styles.sectionTitle}>Thank You Notes</Text>
+            <Text style={styles.text}>{profile.thankYouNotes}</Text>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Interests</Text>
+          <Text style={styles.text}>{profile.interests.join(', ')}</Text>
+        </View>
+      </View>
+
+      {/* Navigation Buttons */}
+      <View style={styles.navigationButtons}>
+        <TouchableOpacity
+          onPress={prevProfile}
+          disabled={currentIndex === 0}
+          style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
+        >
+          <AntDesign name="left" size={24} color="#7C5B9D" />
+          <Text style={styles.navButtonText}>Previous</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={nextProfile}
+          disabled={currentIndex === profiles.length - 1}
+          style={[styles.navButton, currentIndex === profiles.length - 1 && styles.navButtonDisabled]}
+        >
+          <Text style={styles.navButtonText}>Next</Text>
+          <AntDesign name="right" size={24} color="#7C5B9D" />
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff0f5',
-    paddingTop: 50,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#cc3366',
-  },
-  card: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
+    padding: 24,
+    backgroundColor: 'white',
+    flexGrow: 1,
     alignItems: 'center',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  backText: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    marginLeft: 6,
   },
   profileImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    marginRight: 15,
+    width: 300,
+    height: 300,
+    borderRadius: 16,
+    borderWidth: 3,
+    borderColor: '#7C5B9D',
+    marginBottom: 20,
   },
-  placeholderImage: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#eee',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 15,
-  },
-  placeholderText: {
-    color: '#aaa',
-    fontSize: 12,
-  },
-  info: {
-    flex: 1,
+  profileCard: {
+    backgroundColor: '#7C5B9D',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 4,
+    marginBottom: 25,
   },
   name: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 22,
+    fontWeight: '700',
+    color: 'white',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  section: {
+    marginBottom: 18,
+  },
+  sectionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 18,
+  },
+  leftCol: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  rightCol: {
+    flex: 1,
+    paddingLeft: 10,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'white',
     marginBottom: 4,
   },
-  bio: {
+  text: {
     fontSize: 15,
-    color: '#555',
-    marginBottom: 4,
+    color: 'white',
+    lineHeight: 20,
   },
-  details: {
+  loveLanguagesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  loveLanguageItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  loveLanguageText: {
+    color: 'white',
     fontSize: 14,
-    color: '#777',
+    marginLeft: 6,
+    fontWeight: '600',
+  },
+  navigationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: 25,
+    paddingHorizontal: 10,
+  },
+  navButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  navButtonDisabled: {
+    opacity: 0.3,
+  },
+  navButtonText: {
+    fontSize: 16,
+    color: '#7C5B9D',
+    marginHorizontal: 6,
   },
 });

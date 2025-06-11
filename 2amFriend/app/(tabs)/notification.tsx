@@ -1,7 +1,8 @@
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Simulated notification data
 const notifications = [
   { id: '1', title: 'New Match!', message: 'You have a new match with Liam Nguyen.' },
   { id: '2', title: 'Message Received', message: 'Maya Patel sent you a message.' },
@@ -11,12 +12,19 @@ const notifications = [
 ];
 
 export default function NotificationsScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notifications</Text>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+        <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={({ item }) => (
           <View style={styles.card}>
             <Text style={styles.notificationTitle}>{item.title}</Text>
@@ -31,37 +39,39 @@ export default function NotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    backgroundColor: 'white',
+    paddingTop: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#fdf8f6',
   },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#cc3366',
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  backText: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    marginLeft: 6,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#7C5B9D',
     borderRadius: 16,
     padding: 18,
     marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
   notificationTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 6,
+    color: 'white',
+    marginBottom: 4,
   },
   notificationMessage: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: 15,
+    color: 'white',
   },
 });

@@ -1,8 +1,8 @@
+import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Simulated matched user chat data
 const matchedChats = [
   {
     id: '1',
@@ -28,24 +28,33 @@ export default function ChatScreen() {
   const router = useRouter();
 
   const handleChatPress = (chatId: string) => {
-    router.push(`/`); // Route to detailed chat view
+    router.push(`/`); // Change to specific chat route if needed
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>💬 Your Matches</Text>
+      {/* Header Container */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Chats</Text>
+      </View>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+        <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
       {matchedChats.length === 0 ? (
-        <Text style={styles.noChatsText}>You haven’t matched with anyone yet 😢</Text>
+        <Text style={styles.noChatsText}>No connections yet. Your people are out there 💫</Text>
       ) : (
         <FlatList
           data={matchedChats}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 40 }}
           renderItem={({ item }) => (
-            <TouchableOpacity style={styles.chatItem} onPress={() => handleChatPress(item.id)}>
-              <View style={styles.chatInfo}>
-                <Text style={styles.name}>{item.name}</Text>
-                <Text style={styles.message}>{item.lastMessage}</Text>
-              </View>
+            <TouchableOpacity style={styles.card} onPress={() => handleChatPress(item.id)}>
+              <Text style={styles.name}>{item.name}</Text>
+              <Text style={styles.message}>{item.lastMessage}</Text>
               <Text style={styles.timestamp}>{item.timestamp}</Text>
             </TouchableOpacity>
           )}
@@ -58,49 +67,63 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff0f5',
+    backgroundColor: 'white',
     paddingTop: 60,
     paddingHorizontal: 20,
   },
-  header: {
-    fontSize: 26,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#cc3366',
-  },
-  noChatsText: {
-    fontSize: 16,
-    textAlign: 'center',
-    color: '#777',
-    marginTop: 50,
-  },
-  chatItem: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
+  headerContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
     marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 2,
   },
-  chatInfo: {
-    flex: 1,
-    marginRight: 10,
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#7C5B9D',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  backText: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    marginLeft: 6,
+  },
+  card: {
+    backgroundColor: '#7C5B9D',
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
   name: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
+    marginBottom: 4,
   },
   message: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 4,
+    fontSize: 15,
+    color: 'white',
+    marginBottom: 6,
   },
   timestamp: {
     fontSize: 12,
-    color: '#999',
+    color: 'white',
+    textAlign: 'right',
+  },
+  noChatsText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#7C5B9D',
+    marginTop: 50,
   },
 });

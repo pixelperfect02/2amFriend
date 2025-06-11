@@ -29,7 +29,7 @@ export default function SignUpScreen() {
   };
 
   const handleCreateAccount = () => {
-    Alert.alert('Creating account for:', `${name}, ${email}`);
+    Alert.alert(`Creating account for:\n${name}\n${email}`);
   };
 
   return (
@@ -37,6 +37,15 @@ export default function SignUpScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {/* Back Button */}
+      <TouchableOpacity 
+        style={styles.backButton}
+        onPress={() => router.replace('/')}
+        activeOpacity={0.7}
+      >
+        <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
+      </TouchableOpacity>
+
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
@@ -109,7 +118,16 @@ export default function SignUpScreen() {
           </TouchableOpacity>
         </View>
 
-       
+        {/* Continue Arrow */}
+        <TouchableOpacity 
+          style={styles.arrowContainer} 
+          onPress={() => router.push('/welcome')}
+          activeOpacity={0.7}
+        >
+          <View style={styles.circle}>
+            <AntDesign name="arrowright" size={28} color="white" />
+          </View>
+        </TouchableOpacity>
 
         {/* Already have an account */}
         <TouchableOpacity 
@@ -121,19 +139,6 @@ export default function SignUpScreen() {
             Already have an account? <Text style={styles.loginLink}>Log in</Text>
           </Text>
         </TouchableOpacity>
-
-         {/* Continue Arrow */}
-         <TouchableOpacity 
-          style={styles.arrowContainer} 
-          onPress={() => router.push('/criteria-selection')}
-          activeOpacity={0.7}
-        >
-          <View style={styles.circle}>
-            <AntDesign name="arrowright" size={28} color="black" />
-          </View>
-        </TouchableOpacity>
-
-
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -145,14 +150,22 @@ const isSmallDevice = width < 375;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#003B8B',
+    backgroundColor: 'white',
+  },
+  backButton: {
+    position: 'absolute',
+    top: height * 0.095,
+    left: 8,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
   },
   scrollContainer: {
     flexGrow: 1,
     paddingHorizontal: 25,
     paddingBottom: 40,
-    paddingTop: height * 0.05,
-    marginTop: 50,
+    paddingTop: height * 0.1,
   },
   headerContainer: {
     marginBottom: height * 0.04,
@@ -161,13 +174,14 @@ const styles = StyleSheet.create({
   header: {
     fontSize: isSmallDevice ? 24 : 28,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#7C5B9D',
     marginBottom: 8,
     textAlign: 'center',
   },
   subHeader: {
     fontSize: isSmallDevice ? 14 : 16,
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#7C5B9D',
+    opacity: 0.8,
     textAlign: 'center',
   },
   formContainer: {
@@ -180,14 +194,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     fontSize: isSmallDevice ? 14 : 16,
     marginBottom: 15,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: '#7C5B9D',
+    color: '#7C5B9D',
   },
   createAccountButton: {
-    backgroundColor: '#FFD700',
+    backgroundColor: '#7C5B9D',
     paddingVertical: isSmallDevice ? 14 : 16,
     borderRadius: 30,
     alignItems: 'center',
@@ -201,7 +213,7 @@ const styles = StyleSheet.create({
   createAccountText: {
     fontSize: isSmallDevice ? 16 : 18,
     fontWeight: '600',
-    color: '#003B8B',
+    color: 'white',
   },
   dividerContainer: {
     flexDirection: 'row',
@@ -211,11 +223,13 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: '#7C5B9D',
+    opacity: 0.3,
   },
   dividerText: {
     marginHorizontal: 10,
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: '#7C5B9D',
+    opacity: 0.7,
     fontWeight: '500',
     fontSize: isSmallDevice ? 14 : 16,
   },
@@ -230,11 +244,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 15,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderWidth: 1,
+    borderColor: '#7C5B9D',
   },
   googleButton: {
     backgroundColor: 'white',
@@ -246,6 +257,7 @@ const styles = StyleSheet.create({
     fontSize: isSmallDevice ? 14 : 16,
     fontWeight: '500',
     marginLeft: 10,
+    color: '#7C5B9D',
   },
   icon: {
     marginRight: 10,
@@ -256,7 +268,7 @@ const styles = StyleSheet.create({
     marginBottom: height * 0.04,
   },
   circle: {
-    backgroundColor: '#FFD700',
+    backgroundColor: '#7C5B9D',
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -272,7 +284,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginText: {
-    color: 'white',
+    color: '#7C5B9D',
     fontSize: isSmallDevice ? 14 : 16,
   },
   loginLink: {

@@ -1,7 +1,8 @@
+import { AntDesign } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// Simulated saved profiles data
 const savedProfiles = [
   {
     id: '1',
@@ -41,17 +42,30 @@ const savedProfiles = [
 ];
 
 export default function SavedProfilesScreen() {
+  const router = useRouter();
+
   const handleProfileClick = (profileId: string) => {
     console.log(`Navigate to profile with id: ${profileId}`);
-    // Navigate to the profile details screen when clicked (you can use a navigation library here)
+    // TODO: Navigate to detailed profile screen
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>💖 Saved Profiles</Text>
+      {/* Header Container */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Saved Profiles</Text>
+      </View>
+
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+        <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
+        <Text style={styles.backText}>Back</Text>
+      </TouchableOpacity>
+
       <FlatList
         data={savedProfiles}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={({ item }) => (
           <TouchableOpacity style={styles.card} onPress={() => handleProfileClick(item.id)}>
             <Text style={styles.name}>
@@ -69,42 +83,57 @@ export default function SavedProfilesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
+    backgroundColor: 'white',
+    paddingTop: 60,
     paddingHorizontal: 20,
-    backgroundColor: '#fdf8f6',
   },
-  title: {
-    fontSize: 26,
+  headerContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 24,
     fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#cc3366',
+    color: '#7C5B9D',
+  },
+  backButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  backText: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    marginLeft: 6,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#7C5B9D',
     borderRadius: 16,
     padding: 18,
     marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 4,
   },
   name: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
     marginBottom: 6,
   },
   bio: {
     fontSize: 16,
-    color: '#666',
+    color: 'white',
     marginBottom: 8,
   },
   details: {
     fontSize: 14,
-    color: '#777',
+    color: 'white',
     lineHeight: 20,
   },
 });
