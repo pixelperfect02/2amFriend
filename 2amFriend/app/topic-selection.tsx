@@ -184,13 +184,13 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 37,
+    top: 30,
     left: 10,
     zIndex: 10,
   },
   forwardButton: {
     position: 'absolute',
-    top: 31,
+    top: 26,
     right: 5,
     zIndex: 10,
     padding: 10,
