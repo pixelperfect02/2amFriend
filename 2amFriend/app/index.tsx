@@ -28,13 +28,14 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#7C5B9D',
+    // backgroundColor: 'white',
   },
   background: {
     flex: 1,
     width: '100%',
     height: '100%',
     marginTop: -10, // slightly more lift
-    transform: [{ scale: 1.32 }], // increased scale for bigger image
+    transform: [{ scale: 0.9 }], // increased scale for bigger image
   },
 });

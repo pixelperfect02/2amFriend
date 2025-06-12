@@ -16,7 +16,6 @@ const profiles = [
     status: 'Active Member',
     loveLanguages: ['Words of Affirmation', 'Quality Time'],
     interests: ['Reading', 'Coffee', 'Technology'],
-    location: 'San Francisco, CA',
   },
   {
     id: '2',
@@ -30,7 +29,7 @@ const profiles = [
     status: 'Premium Member',
     loveLanguages: ['Receiving Gifts', 'Acts of Service'],
     interests: ['Baking', 'Hiking', 'Animals'],
-    location: 'Portland, OR',
+    location: '',
   },
 ];
 
@@ -99,7 +98,9 @@ export default function PotentialProfilesScreen() {
 
         <View style={styles.sectionRow}>
           <View style={styles.leftCol}>
-            <Text style={styles.sectionTitle}>Location</Text>
+            <Text style={styles.sectionTitle}>
+              Would like to connect with someone similar to the person passed away
+            </Text>
             <Text style={styles.text}>{profile.location}</Text>
           </View>
           <View style={styles.rightCol}>

@@ -1,5 +1,5 @@
 import { AntDesign } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -8,34 +8,99 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
-const options = [
-  { text: 'Job related', emoji: '💼' },
-  { text: 'Love Life related', emoji: '💔' },
-  { text: 'Passion following related', emoji: '🔥' },
-  { text: 'Loneliness in a foreign place/country', emoji: '🌏' },
-  { text: 'Business not doing well', emoji: '📉' },
-  { text: 'Marriage related', emoji: '💍' },
-  { text: 'Sexuality and Sexual Orientation related', emoji: '🏳️‍🌈' },
-];
+const subcategoryMap: Record<string, { text: string; emoji: string }[]> = {
+  'Similar Struggles': [
+    { text: 'Job related', emoji: '💼' },
+    { text: 'Love life related', emoji: '💔' },
+    { text: 'Passion following related', emoji: '🔥' },
+    { text: 'Loneliness in a foreign place/Country', emoji: '🌏' },
+    { text: 'Marriage related', emoji: '💍' },
+    { text: 'Sexuality & sexual orientation', emoji: '🏳️‍🌈' },
+    { text: 'Career/Business not going well', emoji: '📉' },
+    { text: 'Physical disability', emoji: '🦽' },
+    { text: 'Debt related', emoji: '💸' },
+  ],
+  'Similar Trauma': [
+    { text: 'Bullying', emoji: '😢' },
+    { text: 'Community Violence / Racial Discrimination', emoji: '✊🏾' },
+    { text: 'Natural Disasters', emoji: '🌪️' },
+    { text: 'Partner violence', emoji: '💔' },
+    { text: 'Physical abuse', emoji: '👊' },
+    { text: 'Sexual abuse/assault', emoji: '🚫' },
+    { text: 'Military combat', emoji: '🎖️' },
+    { text: 'Emotional abuse', emoji: '🧠' },
+    { text: 'Prenatal/Postnatal trauma', emoji: '👶' },
+    { text: 'Intergenerational trauma', emoji: '🧬' },
+    { text: 'Childhood abuse/Neglect', emoji: '🧸' },
+    { text: 'Parents’ separation', emoji: '🏚️' },
+  ],
+  'Similar Mental Health State': [
+    { text: 'Depressed', emoji: '😞' },
+    { text: 'Stressed all the time', emoji: '😰' },
+    { text: 'Anxiety & Panic attacks', emoji: '😨' },
+    { text: 'PTSD', emoji: '🧠' },
+    { text: 'Grief phase', emoji: '🕊️' },
+    { text: 'Healed & in good state', emoji: '🌈' },
+    { text: 'Addiction (Alcohol / Drug / Sex)', emoji: '🍷' },
+    { text: 'Self-harm thoughts', emoji: '⚠️' },
+    { text: 'Phobias', emoji: '🕷️' },
+  ],
+  'Similar Culture': [
+    { text: 'Individualistic Cultures', emoji: '👤' },
+    { text: 'Family-oriented / Collectivistic Cultures', emoji: '👨‍👩‍👧‍👦' },
+  ],
+  'Similar Mindset': [
+    { text: 'Optimistic', emoji: '😊' },
+    { text: 'Pessimistic', emoji: '☹️' },
+    { text: 'Proactive', emoji: '⚡' },
+    { text: 'Reactive', emoji: '🔁' },
+    { text: 'Entrepreneurial', emoji: '💼' },
+    { text: 'Victim', emoji: '🙇' },
+    { text: 'Creator', emoji: '🎨' },
+    { text: 'Analytical', emoji: '📊' },
+    { text: 'Intuitive', emoji: '🌙' },
+    { text: 'Competitive', emoji: '🏁' },
+    { text: 'Collaborative', emoji: '🤝' },
+  ],
+  'Similar Life Experiences': [
+    { text: 'A traumatic event', emoji: '⚡' },
+    { text: 'Falling In Love', emoji: '❤️' },
+    { text: 'Heartbreak', emoji: '💔' },
+    { text: 'Having children', emoji: '👶' },
+    { text: 'Travelling', emoji: '✈️' },
+    { text: 'Personal goal achieved', emoji: '🏅' },
+    { text: 'Professional goal achieved', emoji: '💼' },
+    { text: 'Major health issue', emoji: '🏥' },
+    { text: 'Life-threatening events', emoji: '🚨' },
+    { text: 'Spiritual Awakening', emoji: '🧘‍♀️' },
+    { text: 'Rejection', emoji: '🚫' },
+  ],
+};
 
 export default function TopicSelectionScreen() {
-  const [selected, setSelected] = useState<string[]>([]);
+  const { category } = useLocalSearchParams();
   const router = useRouter();
+  const [selected, setSelected] = useState<string[]>([]);
+  const options = subcategoryMap[category as string] || [];
 
   const toggleSelection = (item: string) => {
-    if (selected.includes(item)) {
-      setSelected(prev => prev.filter(i => i !== item));
+    if (category === 'Similar Culture') {
+      setSelected(prev => (prev.includes(item) ? [] : [item]));
     } else {
-      if (selected.length >= 3) {
-        Alert.alert('Limit Reached', 'You can select a maximum of 3 topics.');
-        return;
+      if (selected.includes(item)) {
+        setSelected(prev => prev.filter(i => i !== item));
+      } else {
+        if (selected.length >= 3) {
+          Alert.alert('Limit Reached', 'You can select a maximum of 3 topics.');
+          return;
+        }
+        setSelected(prev => [...prev, item]);
       }
-      setSelected(prev => [...prev, item]);
     }
   };
 
@@ -43,23 +108,50 @@ export default function TopicSelectionScreen() {
     if (selected.length === 0) {
       Alert.alert('Selection Required', 'Please select at least one topic.');
     } else {
-      router.push('/find-match');
+      if (category === 'Have lost a family member or friend') {
+        router.push('/grief-form');
+      } else {
+        router.push('/find-match');
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.backButton}
         onPress={() => router.replace('/criteria-selection')}
-        activeOpacity={0.7}
       >
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
       </TouchableOpacity>
-      
-      <Text style={styles.header}>Choose Your Struggles</Text>
-      <Text style={styles.subheader}>Choose 1–3 that resonate most or at least 1 to continue</Text>
+
+      <TouchableOpacity
+        style={styles.forwardButton}
+        onPress={handleNext}
+        disabled={selected.length === 0}
+      >
+        <AntDesign
+          name="arrowright"
+          size={24}
+          color={selected.length === 0 ? '#ccc' : '#7C5B9D'}
+        />
+      </TouchableOpacity>
+
+      <Text style={styles.header}>Choose: {category}</Text>
+      <Text style={styles.subheader}>
+        {category === 'Similar Culture'
+          ? 'Pick one that describes you best'
+          : category === 'Have lost a family member or friend'
+          ? 'Fill out the next form to continue'
+          : 'Pick 1–3 topics to continue'}
+      </Text>
+
+      {/* Conditionally render subheading ONLY for "Similar Life Experiences" */}
+      {category === 'Similar Life Experiences' && (
+        <Text style={styles.lifeExperienceSubheading}>
+          A life experience that changed your life:
+        </Text>
+      )}
 
       <FlatList
         contentContainerStyle={styles.listContainer}
@@ -67,17 +159,11 @@ export default function TopicSelectionScreen() {
         keyExtractor={(item) => item.text}
         renderItem={({ item }) => (
           <TouchableOpacity
-            style={[
-              styles.option,
-              selected.includes(item.text) && styles.optionSelected,
-            ]}
+            style={[styles.option, selected.includes(item.text) && styles.optionSelected]}
             onPress={() => toggleSelection(item.text)}
           >
             <Text
-              style={[
-                styles.optionText,
-                selected.includes(item.text) && styles.optionTextSelected,
-              ]}
+              style={[styles.optionText, selected.includes(item.text) && styles.optionTextSelected]}
             >
               {item.emoji}  {item.text}
             </Text>
@@ -85,19 +171,9 @@ export default function TopicSelectionScreen() {
         )}
         showsVerticalScrollIndicator={false}
       />
-
-      <View style={styles.arrowContainer}>
-        <TouchableOpacity onPress={handleNext}>
-          <View style={styles.circle}>
-            <AntDesign name="arrowright" size={28} color="white" />
-          </View>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
-
-const baseFontSize = width < 375 ? 14 : width < 430 ? 16 : 18;
 
 const styles = StyleSheet.create({
   container: {
@@ -108,8 +184,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 55,
+    top: 37,
     left: 10,
+    zIndex: 10,
+  },
+  forwardButton: {
+    position: 'absolute',
+    top: 31,
+    right: 5,
     zIndex: 10,
     padding: 10,
     backgroundColor: 'white',
@@ -128,6 +210,13 @@ const styles = StyleSheet.create({
     color: '#7C5B9D',
     marginBottom: 24,
   },
+  lifeExperienceSubheading: {
+    fontSize: 18,
+    fontWeight: '600',
+    textAlign: 'center',
+    color: '#7C5B9D',
+    marginBottom: 20,
+  },
   listContainer: {
     paddingBottom: height * 0.18,
   },
@@ -139,16 +228,10 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderWidth: 1,
     borderColor: '#7C5B9D',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
   },
   optionSelected: {
     backgroundColor: '#D6D3E9',
     borderColor: '#7C5B9D',
-    borderWidth: 1,
   },
   optionText: {
     fontSize: 18,
@@ -157,25 +240,5 @@ const styles = StyleSheet.create({
   optionTextSelected: {
     fontWeight: 'bold',
     color: 'white',
-  },
-  arrowContainer: {
-    position: 'absolute',
-    bottom: height * 0.06,
-    left: '50%',
-    marginLeft: 1,
-    alignItems: 'center',
-  },
-  circle: {
-    backgroundColor: '#7C5B9D',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
   },
 });

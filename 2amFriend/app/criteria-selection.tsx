@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -30,17 +30,43 @@ export default function CriteriaSelectionScreen() {
     setSelected(prev => (prev === item ? null : item));
   };
 
-  return ( 
+  const handleForward = () => {
+    if (!selected) return;
+
+    if (selected === 'Have lost a family member or friend') {
+      // Directly go to grief-form.tsx
+      router.push('/grief-form');
+    } else {
+      // Usual flow to topic-selection with selected category
+      router.push({ pathname: '/topic-selection', params: { category: selected } });
+    }
+  };
+
+  return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity 
+      {/* Back Arrow - Top Left */}
+      <TouchableOpacity
         style={styles.backButton}
         onPress={() => router.replace('/sign-up')}
         activeOpacity={0.7}
       >
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
       </TouchableOpacity>
-      
+
+      {/* Forward Arrow - Top Right */}
+      <TouchableOpacity
+        style={styles.forwardButton}
+        onPress={handleForward}
+        disabled={!selected}
+        activeOpacity={0.7}
+      >
+        <AntDesign
+          name="arrowright"
+          size={24}
+          color={selected ? '#7C5B9D' : '#ccc'}
+        />
+      </TouchableOpacity>
+
       <Text style={styles.header}>Find Your Connection:</Text>
       <Text style={styles.subheader}>What brings you here?</Text>
       <Text style={styles.subsubheader}>Choose 1 to continue</Text>
@@ -69,35 +95,30 @@ export default function CriteriaSelectionScreen() {
         )}
         showsVerticalScrollIndicator={false}
       />
-
-      <View style={styles.arrowContainer}>
-        <TouchableOpacity
-          onPress={() => router.push('/topic-selection')}
-          disabled={!selected}
-          activeOpacity={0.7}
-        >
-          <View style={styles.circle}>
-            <AntDesign name="arrowright" size={28} color="white" />
-          </View>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
-
-const baseFontSize = width < 375 ? 14 : width < 430 ? 16 : 18;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 90,
   },
   backButton: {
     position: 'absolute',
     top: 55,
     left: 10,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 20,
+  },
+  forwardButton: {
+    position: 'absolute',
+    top: 55,
+    right: 10,
     zIndex: 10,
     padding: 10,
     backgroundColor: 'white',
@@ -124,7 +145,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   listContainer: {
-    paddingBottom: height * 0.18,
+    paddingBottom: height * 0.1,
   },
   option: {
     paddingVertical: 18,
@@ -143,7 +164,6 @@ const styles = StyleSheet.create({
   optionSelected: {
     backgroundColor: '#D6D3E9',
     borderColor: '#7C5B9D',
-    borderWidth: 1,
   },
   optionText: {
     fontSize: 18,
@@ -152,25 +172,5 @@ const styles = StyleSheet.create({
   optionTextSelected: {
     fontWeight: 'bold',
     color: 'white',
-  },
-  arrowContainer: {
-    position: 'absolute',
-    bottom: height * 0.06,
-    left: '50%',
-    marginLeft: 1,
-    alignItems: 'center',
-  },
-  circle: {
-    backgroundColor: '#7C5B9D',
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
   },
 });

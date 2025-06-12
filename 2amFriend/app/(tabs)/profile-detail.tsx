@@ -12,7 +12,7 @@ const loggedInUser = {
   details:
     'I’m an avid hiker and spend weekends exploring nature trails. I’m also working on my first mystery novel. Looking to meet someone who values curiosity and connection.',
   photo: null,
-  location: 'Adelaide, Australia',
+  location: '',
   interests: ['Hiking', 'Reading', 'Travel', 'Cooking'],
   social: {
     instagram: '@johndoe',
@@ -90,7 +90,7 @@ export default function UserProfile() {
 
         <View style={styles.sectionRow}>
           <View style={styles.leftCol}>
-            <Text style={styles.sectionTitle}>Location</Text>
+            <Text style={styles.sectionTitle}>Would like to connect with someone similar to the person passed away</Text>
             <Text style={styles.text}>{loggedInUser.location}</Text>
           </View>
           <View style={styles.rightCol}>
