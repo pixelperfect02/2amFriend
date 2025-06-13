@@ -7,7 +7,7 @@ const profiles = [
   {
     id: '1',
     name: 'Liam Nguyen',
-    age: 28,
+    username: '@liam_ng',
     bio: 'Avid reader and thoughtful conversationalist.',
     details: 'Software engineer with a passion for literature and meaningful discussions over coffee.',
     photo: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=500&q=80',
@@ -20,7 +20,7 @@ const profiles = [
   {
     id: '2',
     name: 'Maya Patel',
-    age: 25,
+    username: '@maya_p',
     bio: 'Nature enthusiast and animal lover.',
     details: 'Vegan baker who enjoys hiking and connecting with fellow adventurers.',
     photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80',
@@ -69,9 +69,7 @@ export default function PotentialProfilesScreen() {
       />
 
       <View style={styles.profileCard}>
-        <Text style={styles.name}>
-          {profile.name}, {profile.age}
-        </Text>
+        <Text style={styles.username}>{profile.username}</Text>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About Me</Text>
@@ -187,7 +185,7 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginBottom: 25,
   },
-  name: {
+  username: {
     fontSize: 22,
     fontWeight: '700',
     color: 'white',

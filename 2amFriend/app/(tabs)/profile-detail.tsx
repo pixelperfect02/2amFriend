@@ -1,12 +1,12 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'; // added MaterialCommunityIcons for more icon options
+import { AntDesign, FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
 // Simulated logged-in user data
 const loggedInUser = {
   name: 'John Doe',
-  age: 29,
+  username: '@john_doe',
   email: 'john.doe@example.com',
   bio: 'Loves hiking and reading books.',
   details:
@@ -14,14 +14,16 @@ const loggedInUser = {
   photo: null,
   location: '',
   interests: ['Hiking', 'Reading', 'Travel', 'Cooking'],
-  social: {
-    instagram: '@johndoe',
-    twitter: '@doejohn',
-  },
+  // social: {
+  //   instagram: '@johndoe',
+  //   twitter: '@doejohn',
+  // },
   karmaPoints: 128,
   thankYouNotes: 45,
   status: 'Active Premium User',
-  loveLanguages: ['Words of Affirmation', 'Quality Time'], // new field
+  loveLanguages: ['Words of Affirmation', 'Quality Time'],
+  showName: true,
+  isVerified: false, // Added verification status
 };
 
 const loveLanguageIcons = {
@@ -32,9 +34,11 @@ const loveLanguageIcons = {
   'Physical Touch': () => <MaterialCommunityIcons name="hand-wave" size={20} color="white" />,
 };
 
-
 export default function UserProfile() {
   const router = useRouter();
+  const [showName, setShowName] = useState(loggedInUser.showName);
+  const [verificationAlertVisible, setVerificationAlertVisible] = useState(!loggedInUser.isVerified);
+  const [userData, setUserData] = useState(loggedInUser);
 
   const handleSettings = () => {
     router.push('/');
@@ -44,44 +48,118 @@ export default function UserProfile() {
     router.push('/');
   };
 
+  const toggleShowName = () => {
+    setShowName(previousState => !previousState);
+  };
+
+  const handleUploadID = () => {
+    Alert.alert(
+      "Verify Your Identity",
+      "Please upload a clear photo of your government-issued ID for verification. This helps us ensure a safe community.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { 
+          text: "Upload ID", 
+          onPress: () => {
+            // Simulate successful verification after upload
+            setTimeout(() => {
+              setUserData(prev => ({ ...prev, isVerified: true }));
+              setVerificationAlertVisible(false);
+              Alert.alert("Verification Submitted", "Your ID has been submitted for verification. We'll notify you once it's approved.");
+            }, 1500);
+          } 
+        }
+      ]
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Verification Alert */}
+      {verificationAlertVisible && (
+        <View style={styles.verificationAlert}>
+          <View style={styles.alertContent}>
+            <FontAwesome name="exclamation-triangle" size={20} color="#FFD700" />
+            <Text style={styles.alertText}>Please verify your identity by uploading a government-issued ID</Text>
+            <TouchableOpacity onPress={handleUploadID} style={styles.alertButton}>
+              <Text style={styles.alertButtonText}>Upload ID</Text>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity 
+            onPress={() => setVerificationAlertVisible(false)} 
+            style={styles.alertCloseButton}
+          >
+            <AntDesign name="close" size={16} color="#FFD700" />
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
-      {loggedInUser.photo ? (
-        <Image source={{ uri: loggedInUser.photo }} style={styles.profileImage} />
+      {userData.photo ? (
+        <Image source={{ uri: userData.photo }} style={styles.profileImage} />
       ) : (
         <View style={styles.placeholderImage}>
           <Text style={styles.placeholderText}>Add Photo</Text>
         </View>
       )}
 
+      {/* Verification Status */}
+      <View style={styles.verificationStatus}>
+        {userData.isVerified ? (
+          <View style={styles.verifiedBadge}>
+            <AntDesign name="checkcircle" size={16} color="#4CAF50" />
+            <Text style={styles.verifiedText}>Verified Profile</Text>
+          </View>
+        ) : (
+          <View style={styles.unverifiedBadge}>
+            <AntDesign name="exclamationcircle" size={16} color="#FFC107" />
+            <Text style={styles.unverifiedText}>Unverified Profile</Text>
+          </View>
+        )}
+      </View>
+
       <View style={styles.profileCard}>
-        <Text style={styles.name}>
-          {loggedInUser.name}, {loggedInUser.age}
-        </Text>
+        <View style={styles.nameToggleContainer}>
+          <Text style={styles.username}>{userData.username}</Text>
+          <View style={styles.toggleContainer}>
+            <Text style={styles.toggleLabel}>Show Name</Text>
+            <Switch
+              trackColor={{ false: '#767577', true: '#D6D3E9' }}
+              thumbColor={showName ? '#f4f3f4' : '#f4f3f4'}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleShowName}
+              value={showName}
+            />
+          </View>
+        </View>
+
+        {showName && <Text style={styles.name}>{userData.name}</Text>}
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About Me</Text>
-          <Text style={styles.text}>{loggedInUser.bio}</Text>
+          <Text style={styles.text}>{userData.bio}</Text>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>More Details</Text>
-          <Text style={styles.text}>{loggedInUser.details}</Text>
+          <Text style={styles.text}>{userData.details}</Text>
         </View>
 
         {/* Love Languages Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Love Languages</Text>
           <View style={styles.loveLanguagesContainer}>
-            {loggedInUser.loveLanguages.map((lang, idx) => (
+            {userData.loveLanguages.map((lang, idx) => (
               <View key={idx} style={styles.loveLanguageItem}>
-                {/* {loveLanguageIcons[lang] || <Text style={styles.loveLanguageIconFallback}>💖</Text>} */}
+                {/* {loveLanguageIcons[lang] && loveLanguageIcons[lang]()} */}
                 <Text style={styles.loveLanguageText}>{lang}</Text>
               </View>
             ))}
@@ -91,40 +169,40 @@ export default function UserProfile() {
         <View style={styles.sectionRow}>
           <View style={styles.leftCol}>
             <Text style={styles.sectionTitle}>Would like to connect with someone similar to the person passed away</Text>
-            <Text style={styles.text}>{loggedInUser.location}</Text>
+            <Text style={styles.text}>{userData.location}</Text>
           </View>
           <View style={styles.rightCol}>
             <Text style={styles.sectionTitle}>Status</Text>
-            <Text style={styles.text}>{loggedInUser.status}</Text>
+            <Text style={styles.text}>{userData.status}</Text>
           </View>
         </View>
 
         <View style={styles.sectionRow}>
           <View style={styles.leftCol}>
             <Text style={styles.sectionTitle}>Good Karma Points</Text>
-            <Text style={styles.text}>{loggedInUser.karmaPoints}</Text>
+            <Text style={styles.text}>{userData.karmaPoints}</Text>
           </View>
           <View style={styles.rightCol}>
             <Text style={styles.sectionTitle}>Thank You Notes</Text>
-            <Text style={styles.text}>{loggedInUser.thankYouNotes}</Text>
+            <Text style={styles.text}>{userData.thankYouNotes}</Text>
           </View>
         </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Interests</Text>
-          <Text style={styles.text}>{loggedInUser.interests.join(', ')}</Text>
+          <Text style={styles.text}>{userData.interests.join(', ')}</Text>
         </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.sectionTitle}>Social Links</Text>
-          <Text style={styles.text}>Instagram: {loggedInUser.social.instagram}</Text>
-          <Text style={styles.text}>Twitter: {loggedInUser.social.twitter}</Text>
-        </View>
-
+          <Text style={styles.text}>Instagram: {userData.social.instagram}</Text>
+          <Text style={styles.text}>Twitter: {userData.social.twitter}</Text>
+        </View> */}
+{/* 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contact Info</Text>
-          <Text style={styles.text}>{loggedInUser.email}</Text>
-        </View>
+          <Text style={styles.text}>{userData.email}</Text>
+        </View> */}
       </View>
 
       <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
@@ -220,6 +298,26 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 4,
     marginBottom: 25,
+  },
+  nameToggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  username: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: 'white',
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  toggleLabel: {
+    color: 'white',
+    marginRight: 8,
+    fontSize: 14,
   },
   name: {
     fontSize: 22,
@@ -327,8 +425,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#7C5B9D',
   },
-
-  // New styles for Love Language
   loveLanguagesContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -349,9 +445,73 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     fontWeight: '600',
   },
-  loveLanguageIconFallback: {
-    fontSize: 18,
+  verificationAlert: {
+    backgroundColor: '#FFF9C4',
+    borderColor: '#FFD700',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 20,
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  alertContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+  },
+  alertText: {
+    marginLeft: 8,
+    marginRight: 8,
+    color: '#795548',
+    flex: 1,
+  },
+  alertButton: {
+    backgroundColor: '#7C5B9D',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  alertButtonText: {
     color: 'white',
-    marginRight: 6,
+    fontSize: 14,
+  },
+  alertCloseButton: {
+    padding: 4,
+  },
+  verificationStatus: {
+    marginBottom: 15,
+  },
+  verifiedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignSelf: 'center',
+  },
+  verifiedText: {
+    color: '#2E7D32',
+    marginLeft: 6,
+    fontSize: 14,
+  },
+  unverifiedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF8E1',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    alignSelf: 'center',
+  },
+  unverifiedText: {
+    color: '#FF8F00',
+    marginLeft: 6,
+    fontSize: 14,
   },
 });

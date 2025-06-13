@@ -16,11 +16,18 @@ export default function NotificationsScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.headerTitle}>Notifications</Text>
+      </View>
+
+      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
+      {/* Notification List */}
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id}
@@ -42,6 +49,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     paddingTop: 60,
     paddingHorizontal: 20,
+  },
+  headerContainer: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#DDD',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#7C5B9D',
   },
   backButton: {
     flexDirection: 'row',
