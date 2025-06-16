@@ -42,10 +42,10 @@ export default function Layout() {
         tabBarActiveTintColor: '#FFFFFF',    // white labels active
         tabBarInactiveTintColor: '#FFFFFF',  // white labels inactive
         tabBarStyle: {
-          height: 85,
+          height: 67,
           backgroundColor: '#7C5B9D',        // purple background
-          borderTopWidth: 13,
-          borderTopColor: '#7C5B9D',
+          borderTopWidth: 0,
+          // remove border top for clean look, can add if needed
         },
         tabBarLabelStyle: {
           fontSize: 12,
