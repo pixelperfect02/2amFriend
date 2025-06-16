@@ -1,8 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Image, View } from 'react-native';
+import { Dimensions, Image, PixelRatio, View } from 'react-native';
 
 export default function Layout() {
-  const iconSize = 26;
+  // Get screen width to scale icon size
+  const screenWidth = Dimensions.get('window').width;
+
+  // Calculate icon size based on screen width
+  const iconSize = PixelRatio.roundToNearestPixel(screenWidth * 0.06); // ~6% of screen width
 
   const tabIcon = (name: string) => (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -11,7 +15,7 @@ export default function Layout() {
         style={{
           width: iconSize,
           height: iconSize,
-          tintColor: '#FFFFFF',  // white icons
+          tintColor: '#FFFFFF',
           resizeMode: 'contain',
         }}
       />
@@ -39,19 +43,18 @@ export default function Layout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarShowLabel: true,
-        tabBarActiveTintColor: '#FFFFFF',    // white labels active
-        tabBarInactiveTintColor: '#FFFFFF',  // white labels inactive
+        tabBarActiveTintColor: '#FFFFFF',
+        tabBarInactiveTintColor: '#FFFFFF',
         tabBarStyle: {
-          height: 60,
-          backgroundColor: '#7C5B9D',        // purple background
+          height: 85,
+          backgroundColor: '#7C5B9D',
           borderTopWidth: 0,
-          // remove border top for clean look, can add if needed
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: '600',
           marginBottom: 2,
-          color: '#FFFFFF',                   // white labels
+          color: '#FFFFFF',
         },
         headerShown: false,
         tabBarIcon: () => tabIcon(route.name),
