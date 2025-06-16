@@ -141,7 +141,22 @@ export default function UserProfile() {
           </View>
         </View>
 
+      
+        
+
         {showName && <Text style={styles.name}>{userData.name}</Text>}
+
+           {/* Good Karma and Thank You Containers */}
+           <View style={styles.karmaContainer}>
+                  <View style={styles.karmaBox}>
+                    <Text style={styles.karmaLabel}>Good Karma Points</Text>
+                    <Text style={styles.karmaValue}>100</Text>
+                  </View>
+                  <View style={styles.karmaBox}>
+                    <Text style={styles.karmaLabel}>Thank You Notes</Text>
+                    <Text style={styles.karmaValue}>45</Text>
+                  </View>
+                </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About Me</Text>
@@ -177,32 +192,10 @@ export default function UserProfile() {
           </View>
         </View>
 
-        <View style={styles.sectionRow}>
-          <View style={styles.leftCol}>
-            <Text style={styles.sectionTitle}>Good Karma Points</Text>
-            <Text style={styles.text}>{userData.karmaPoints}</Text>
-          </View>
-          <View style={styles.rightCol}>
-            <Text style={styles.sectionTitle}>Thank You Notes</Text>
-            <Text style={styles.text}>{userData.thankYouNotes}</Text>
-          </View>
-        </View>
-
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Interests</Text>
           <Text style={styles.text}>{userData.interests.join(', ')}</Text>
         </View>
-
-        {/* <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Social Links</Text>
-          <Text style={styles.text}>Instagram: {userData.social.instagram}</Text>
-          <Text style={styles.text}>Twitter: {userData.social.twitter}</Text>
-        </View> */}
-{/* 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Contact Info</Text>
-          <Text style={styles.text}>{userData.email}</Text>
-        </View> */}
       </View>
 
       <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
@@ -468,6 +461,31 @@ const styles = StyleSheet.create({
     marginRight: 8,
     color: '#795548',
     flex: 1,
+  },
+  karmaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  karmaBox: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  karmaLabel: {
+    color: '#7C5B9D',
+    fontWeight: '600',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  karmaValue: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    fontWeight: '700',
   },
   alertButton: {
     backgroundColor: '#7C5B9D',

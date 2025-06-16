@@ -55,13 +55,11 @@ export default function PotentialProfilesScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
-      {/* Large Square Profile Image */}
       <Image
         source={{ uri: profile.photo }}
         style={styles.profileImage}
@@ -70,6 +68,18 @@ export default function PotentialProfilesScreen() {
 
       <View style={styles.profileCard}>
         <Text style={styles.username}>{profile.username}</Text>
+
+        {/* Good Karma and Thank You Containers */}
+        <View style={styles.karmaContainer}>
+          <View style={styles.karmaBox}>
+            <Text style={styles.karmaLabel}>Good Karma Points</Text>
+            <Text style={styles.karmaValue}>{profile.goodKarmaPoints}</Text>
+          </View>
+          <View style={styles.karmaBox}>
+            <Text style={styles.karmaLabel}>Thank You Notes</Text>
+            <Text style={styles.karmaValue}>{profile.thankYouNotes}</Text>
+          </View>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About Me</Text>
@@ -81,13 +91,11 @@ export default function PotentialProfilesScreen() {
           <Text style={styles.text}>{profile.details}</Text>
         </View>
 
-        {/* Love Languages Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Love Languages</Text>
           <View style={styles.loveLanguagesContainer}>
             {profile.loveLanguages.map((lang, idx) => (
               <View key={idx} style={styles.loveLanguageItem}>
-                {/* {loveLanguageIcons[lang]()} */}
                 <Text style={styles.loveLanguageText}>{lang}</Text>
               </View>
             ))}
@@ -107,24 +115,12 @@ export default function PotentialProfilesScreen() {
           </View>
         </View>
 
-        <View style={styles.sectionRow}>
-          <View style={styles.leftCol}>
-            <Text style={styles.sectionTitle}>Good Karma Points</Text>
-            <Text style={styles.text}>{profile.goodKarmaPoints}</Text>
-          </View>
-          <View style={styles.rightCol}>
-            <Text style={styles.sectionTitle}>Thank You Notes</Text>
-            <Text style={styles.text}>{profile.thankYouNotes}</Text>
-          </View>
-        </View>
-
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Interests</Text>
           <Text style={styles.text}>{profile.interests.join(', ')}</Text>
         </View>
       </View>
 
-      {/* Navigation Buttons */}
       <View style={styles.navigationButtons}>
         <TouchableOpacity
           onPress={prevProfile}
@@ -191,6 +187,31 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     marginBottom: 20,
+  },
+  karmaContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  karmaBox: {
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: 'center',
+  },
+  karmaLabel: {
+    color: '#7C5B9D',
+    fontWeight: '600',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  karmaValue: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    fontWeight: '700',
   },
   section: {
     marginBottom: 18,

@@ -2,7 +2,6 @@ import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
   Dimensions,
   KeyboardAvoidingView,
@@ -12,74 +11,36 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from 'react-native';
 
-export default function SignUpScreen() {
+export default function LoginScreen() {
   const router = useRouter();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoogleSignUp = () => {
-    Alert.alert('Google sign-up pressed');
+  const handleGoogleLogin = () => {
+    Alert.alert('Google login pressed');
   };
 
-  const handlePhoneSignUp = () => {
-    Alert.alert('Phone number sign-up pressed');
+  const handlePhoneLogin = () => {
+    Alert.alert('Phone number login pressed');
   };
 
-  const handleCreateAccount = async () => {
-    if (!name.trim()) {
-      Alert.alert('Error', 'Please enter your name');
-      return;
-    }
-
-    if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
-      return;
-    }
-
-    if (!password) {
-      Alert.alert('Error', 'Please enter a password');
-      return;
-    }
-
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password should be at least 6 characters');
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      const response = await fetch('http://localhost:5000/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          name: name.trim(), 
-          email: email.trim().toLowerCase(), 
-          password 
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      Alert.alert('Success', 'Account created successfully!');
-      router.push('/login');
-    } catch (error) {
-      console.error('Signup error:', error);
-      // Alert.alert('Error', error.message || 'Something went wrong. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogin = () => {
+    Alert.alert('Login pressed', `Email: ${email}\nPassword: ${password}`);
+    // Uncomment and implement actual login logic when ready
+    // if (!email.trim() || !password.trim()) {
+    //   Alert.alert('Please fill all fields');
+    //   return;
+    // }
+    // try {
+    //   await signInWithEmailAndPassword(auth, email.trim(), password);
+    //   Alert.alert('Login successful!');
+    //   router.push('/welcome');
+    // } catch (error: any) {
+    //   Alert.alert('Login Error', error.message);
+    // }
   };
 
   return (
@@ -88,9 +49,9 @@ export default function SignUpScreen() {
       style={styles.container}
     >
       {/* Back Button */}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.backButton}
-        onPress={() => router.replace('/')}
+        onPress={() => router.replace('/sign-up')}
         activeOpacity={0.7}
       >
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
@@ -102,21 +63,12 @@ export default function SignUpScreen() {
       >
         {/* Header Section */}
         <View style={styles.headerContainer}>
-          <Text style={styles.header}>Welcome to 2 A.M. Friend</Text>
-          <Text style={styles.subHeader}>Find your understanding companion</Text>
+          <Text style={styles.header}>Welcome back to 2 A.M. Friend</Text>
+          <Text style={styles.subHeader}>Your understanding companion awaits</Text>
         </View>
 
-        {/* Create Account Form */}
+        {/* Login Form */}
         <View style={styles.formContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            placeholderTextColor="#aaa"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
-            editable={!isLoading}
-          />
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -125,7 +77,6 @@ export default function SignUpScreen() {
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
-            editable={!isLoading}
           />
           <TextInput
             style={styles.input}
@@ -134,21 +85,26 @@ export default function SignUpScreen() {
             secureTextEntry
             value={password}
             onChangeText={setPassword}
-            editable={!isLoading}
           />
-          <TouchableOpacity 
-            style={[styles.createAccountButton, isLoading && styles.disabledButton]} 
-            onPress={handleCreateAccount}
+          
+          {/* Login Button - Added back */}
+          <TouchableOpacity
+            style={styles.loginButton}
+            onPress={handleLogin}
             activeOpacity={0.8}
-            disabled={isLoading}
           >
-            {isLoading ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <Text style={styles.createAccountText}>Create Account</Text>
-            )}
+            <Text style={styles.loginButtonText}>Log In</Text>
           </TouchableOpacity>
         </View>
+
+        {/* Forgot Password */}
+        <TouchableOpacity
+          style={styles.forgotPasswordContainer}
+          onPress={() => router.push('/')}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+        </TouchableOpacity>
 
         {/* Divider */}
         <View style={styles.dividerContainer}>
@@ -157,56 +113,53 @@ export default function SignUpScreen() {
           <View style={styles.dividerLine} />
         </View>
 
-        {/* Third-party Sign Up */}
+        {/* Third-party Login */}
         <View style={styles.socialButtonsContainer}>
-          <TouchableOpacity 
-            style={[styles.socialButton, styles.googleButton]} 
-            onPress={handleGoogleSignUp}
+          <TouchableOpacity
+            style={[styles.socialButton, styles.googleButton]}
+            onPress={handleGoogleLogin}
             activeOpacity={0.8}
-            disabled={isLoading}
           >
             <AntDesign name="google" size={20} color="#EA4335" style={styles.icon} />
-            <Text style={styles.socialButtonText}>Sign up with Google</Text>
+            <Text style={styles.socialButtonText}>Log in with Google</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
-            style={[styles.socialButton, styles.phoneButton]} 
-            onPress={handlePhoneSignUp}
+          <TouchableOpacity
+            style={[styles.socialButton, styles.phoneButton]}
+            onPress={handlePhoneLogin}
             activeOpacity={0.8}
-            disabled={isLoading}
           >
             <FontAwesome name="phone" size={20} color="#34A853" style={styles.icon} />
-            <Text style={styles.socialButtonText}>Sign up with Phone</Text>
+            <Text style={styles.socialButtonText}>Log in with Phone</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Already have an account */}
-        <TouchableOpacity 
-          style={styles.loginContainer} 
-          onPress={() => !isLoading && router.push('/login')}
+        {/* Continue Arrow - Currently commented out */}
+        {/* <TouchableOpacity
+          style={styles.arrowContainer}
+          onPress={() => router.push('/welcome')}
           activeOpacity={0.7}
-          disabled={isLoading}
-        >
-          <Text style={styles.loginText}>
-            Already have an account? <Text style={styles.loginLink}>Log in</Text>
-          </Text>
-        </TouchableOpacity>
-
-        {/* Continue Arrow */}
-        <TouchableOpacity 
-          style={styles.arrowContainer} 
-          onPress={() => !isLoading && router.push('/welcome')}
-          activeOpacity={0.7}
-          disabled={isLoading}
         >
           <View style={styles.circle}>
             <AntDesign name="arrowright" size={28} color="white" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        {/* Don't have an account - Currently commented out */}
+        {/* <TouchableOpacity
+          style={styles.signUpContainer}
+          onPress={() => router.push('/sign-up')}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.signUpText}>
+            Don't have an account? <Text style={styles.signUpLink}>Sign up</Text>
+          </Text>
+        </TouchableOpacity> */}
       </ScrollView>
     </KeyboardAvoidingView>
   );
 }
+
 
 const { width, height } = Dimensions.get('window');
 const isSmallDevice = width < 375;
@@ -249,7 +202,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   formContainer: {
-    marginBottom: height * 0.03,
+    marginBottom: height * 0.03,  // Matches sign-up spacing
   },
   input: {
     backgroundColor: 'white',
@@ -262,7 +215,7 @@ const styles = StyleSheet.create({
     borderColor: '#7C5B9D',
     color: '#7C5B9D',
   },
-  createAccountButton: {
+  loginButton: {
     backgroundColor: '#7C5B9D',
     paddingVertical: isSmallDevice ? 14 : 16,
     borderRadius: 30,
@@ -274,13 +227,20 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
   },
-  disabledButton: {
-    opacity: 0.7,
-  },
-  createAccountText: {
+  loginButtonText: {
     fontSize: isSmallDevice ? 16 : 18,
     fontWeight: '600',
     color: 'white',
+  },
+  forgotPasswordContainer: {
+    alignItems: 'flex-end',
+    marginBottom: height * 0.03,
+  },
+  forgotPasswordText: {
+    color: '#7C5B9D',
+    fontSize: isSmallDevice ? 14 : 16,
+    textDecorationLine: 'underline',
+    left: -118,
   },
   dividerContainer: {
     flexDirection: 'row',
@@ -331,7 +291,7 @@ const styles = StyleSheet.create({
   },
   arrowContainer: {
     alignItems: 'center',
-    marginTop: height * 0.07,
+    marginTop: height * 0.02,
     marginBottom: height * 0.04,
   },
   circle: {
@@ -347,15 +307,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-  loginContainer: {
+  signUpContainer: {
     alignItems: 'center',
-    marginTop: -30,
   },
-  loginText: {
+  signUpText: {
     color: '#7C5B9D',
     fontSize: isSmallDevice ? 14 : 16,
   },
-  loginLink: {
+  signUpLink: {
     textDecorationLine: 'underline',
     fontWeight: '600',
   },
