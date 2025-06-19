@@ -25,13 +25,13 @@ export default function Layout() {
   const getIconUrl = (name: string) => {
     switch (name) {
       case 'find-match':
-        return 'https://img.icons8.com/ios-filled/50/like.png';
+        return 'https://img.icons8.com/ios-filled/50/search.png';
       case 'chat':
         return 'https://img.icons8.com/ios-filled/50/speech-bubble.png';
       case 'notification':
         return 'https://img.icons8.com/ios-filled/50/appointment-reminders--v1.png';
       case 'saved':
-        return 'https://img.icons8.com/ios-filled/50/bookmark-ribbon--v1.png';
+        return 'https://img.icons8.com/ios-filled/50/like.png';
       case 'profile-detail':
         return 'https://img.icons8.com/ios-filled/50/user-male-circle.png';
       default:
@@ -63,7 +63,7 @@ export default function Layout() {
       <Tabs.Screen name="find-match" options={{ title: 'Find' }} />
       <Tabs.Screen name="chat" options={{ title: 'Chat' }} />
       <Tabs.Screen name="notification" options={{ title: 'Alerts' }} />
-      <Tabs.Screen name="saved" options={{ title: 'Saved' }} />
+      <Tabs.Screen name="saved" options={{ title: 'Likes You' }} />
       <Tabs.Screen name="profile-detail" options={{ title: 'Profile' }} />
     </Tabs>
   );

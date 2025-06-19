@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 
-// Simulated logged-in user data
 const loggedInUser = {
   name: 'John Doe',
   username: '@john_doe',
@@ -11,27 +10,15 @@ const loggedInUser = {
   bio: 'Loves hiking and reading books.',
   details:
     'I’m an avid hiker and spend weekends exploring nature trails. I’m also working on my first mystery novel. Looking to meet someone who values curiosity and connection.',
-  photo: null,
+  photo: require('../../assets/images/john.jpg'),
   location: '',
   interests: ['Hiking', 'Reading', 'Travel', 'Cooking'],
-  // social: {
-  //   instagram: '@johndoe',
-  //   twitter: '@doejohn',
-  // },
   karmaPoints: 128,
   thankYouNotes: 45,
   status: 'Active Premium User',
   loveLanguages: ['Words of Affirmation', 'Quality Time'],
   showName: true,
-  isVerified: false, // Added verification status
-};
-
-const loveLanguageIcons = {
-  'Words of Affirmation': () => <AntDesign name="message1" size={20} color="white" />,
-  'Quality Time': () => <MaterialCommunityIcons name="clock-time-four" size={20} color="white" />,
-  'Receiving Gifts': () => <MaterialCommunityIcons name="gift" size={20} color="white" />,
-  'Acts of Service': () => <MaterialCommunityIcons name="hand-heart" size={20} color="white" />,
-  'Physical Touch': () => <MaterialCommunityIcons name="hand-wave" size={20} color="white" />,
+  isVerified: false,
 };
 
 export default function UserProfile() {
@@ -43,7 +30,6 @@ export default function UserProfile() {
   const handleSettings = () => {
     router.push('/settings');
   };
-  
 
   const handleEditProfile = () => {
     router.push('/edit-profile');
@@ -58,20 +44,16 @@ export default function UserProfile() {
       "Verify Your Identity",
       "Please upload a clear photo of your government-issued ID for verification. This helps us ensure a safe community.",
       [
+        { text: "Cancel", style: "cancel" },
         {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { 
-          text: "Upload ID", 
+          text: "Upload ID",
           onPress: () => {
-            // Simulate successful verification after upload
             setTimeout(() => {
               setUserData(prev => ({ ...prev, isVerified: true }));
               setVerificationAlertVisible(false);
               Alert.alert("Verification Submitted", "Your ID has been submitted for verification. We'll notify you once it's approved.");
             }, 1500);
-          } 
+          }
         }
       ]
     );
@@ -79,7 +61,6 @@ export default function UserProfile() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Verification Alert */}
       {verificationAlertVisible && (
         <View style={styles.verificationAlert}>
           <View style={styles.alertContent}>
@@ -89,30 +70,30 @@ export default function UserProfile() {
               <Text style={styles.alertButtonText}>Upload ID</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity 
-            onPress={() => setVerificationAlertVisible(false)} 
-            style={styles.alertCloseButton}
-          >
+          <TouchableOpacity onPress={() => setVerificationAlertVisible(false)} style={styles.alertCloseButton}>
             <AntDesign name="close" size={16} color="#FFD700" />
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
       {userData.photo ? (
-        <Image source={{ uri: userData.photo }} style={styles.profileImage} />
-      ) : (
-        <View style={styles.placeholderImage}>
-          <Text style={styles.placeholderText}>Add Photo</Text>
-        </View>
-      )}
+  <Image source={userData.photo} style={styles.profileImage} />
+) : (
+  <View style={styles.placeholderImage}>
+    <Image
+      source={require('../../assets/images/john.jpg')}
+      style={styles.ghibliImage}
+      resizeMode="cover"
+    />
+  </View>
+)}
 
-      {/* Verification Status */}
+
       <View style={styles.verificationStatus}>
         {userData.isVerified ? (
           <View style={styles.verifiedBadge}>
@@ -142,22 +123,18 @@ export default function UserProfile() {
           </View>
         </View>
 
-      
-        
-
         {showName && <Text style={styles.name}>{userData.name}</Text>}
 
-           {/* Good Karma and Thank You Containers */}
-           <View style={styles.karmaContainer}>
-                  <View style={styles.karmaBox}>
-                    <Text style={styles.karmaLabel}>Good Karma Points</Text>
-                    <Text style={styles.karmaValue}>100</Text>
-                  </View>
-                  <View style={styles.karmaBox}>
-                    <Text style={styles.karmaLabel}>Thank You Notes</Text>
-                    <Text style={styles.karmaValue}>45</Text>
-                  </View>
-                </View>
+        <View style={styles.karmaContainer}>
+          <View style={styles.karmaBox}>
+            <Text style={styles.karmaLabel}>Good Karma Points</Text>
+            <Text style={styles.karmaValue}>100</Text>
+          </View>
+          <View style={styles.karmaBox}>
+            <Text style={styles.karmaLabel}>Thank You Notes</Text>
+            <Text style={styles.karmaValue}>45</Text>
+          </View>
+        </View>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About Me</Text>
@@ -169,13 +146,11 @@ export default function UserProfile() {
           <Text style={styles.text}>{userData.details}</Text>
         </View>
 
-        {/* Love Languages Section */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Love Languages</Text>
           <View style={styles.loveLanguagesContainer}>
             {userData.loveLanguages.map((lang, idx) => (
               <View key={idx} style={styles.loveLanguageItem}>
-                {/* {loveLanguageIcons[lang] && loveLanguageIcons[lang]()} */}
                 <Text style={styles.loveLanguageText}>{lang}</Text>
               </View>
             ))}
@@ -199,7 +174,6 @@ export default function UserProfile() {
         </View>
       </View>
 
-
       <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
         <Text style={styles.buttonText}>Edit Profile</Text>
       </TouchableOpacity>
@@ -208,17 +182,14 @@ export default function UserProfile() {
         <Text style={styles.settingsButtonText}>Settings</Text>
       </TouchableOpacity>
 
-      {/* Premium Upgrade Section */}
       <View style={styles.premiumContainer}>
         <Text style={styles.premiumTitle}>Premium Upgrade</Text>
-
         <View style={styles.featuresTable}>
           <View style={styles.featuresHeader}>
             <Text style={[styles.featuresCell, styles.headerCell]}>Feature</Text>
             <Text style={[styles.featuresCell, styles.headerCell]}>Regular</Text>
             <Text style={[styles.featuresCell, styles.headerCell]}>Premium</Text>
           </View>
-
           {[
             ['Profile Visibility', 'Limited', 'Unlimited'],
             ['Number of Matches', '5 per day', 'Unlimited'],
@@ -278,6 +249,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     borderWidth: 3,
     borderColor: '#7C5B9D',
+  },
+  ghibliImage: {
+    width: 160,
+    height: 160,
+    borderRadius: 80,
   },
   placeholderText: {
     color: '#999',
@@ -533,5 +509,7 @@ const styles = StyleSheet.create({
     color: '#FF8F00',
     marginLeft: 6,
     fontSize: 14,
+
+    
   },
 });

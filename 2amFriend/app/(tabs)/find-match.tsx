@@ -1,29 +1,28 @@
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Dimensions,
+} from 'react-native';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const IMAGE_WIDTH = SCREEN_WIDTH * 0.8;
+const IMAGE_HEIGHT = IMAGE_WIDTH * 1.5;
 
 const profiles = [
   {
     id: '1',
-    name: 'Liam Nguyen',
-    username: '@liam_ng',
-    bio: 'Avid reader and thoughtful conversationalist.',
-    details: 'Software engineer with a passion for literature and meaningful discussions over coffee.',
-    photo: 'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?auto=format&fit=crop&w=500&q=80',
-    goodKarmaPoints: 120,
-    thankYouNotes: 15,
-    status: 'Active Member',
-    loveLanguages: ['Words of Affirmation', 'Quality Time'],
-    interests: ['Reading', 'Coffee', 'Technology'],
-  },
-  {
-    id: '2',
     name: 'Maya Patel',
     username: '@maya_p',
     bio: 'Nature enthusiast and animal lover.',
     details: 'Vegan baker who enjoys hiking and connecting with fellow adventurers.',
-    photo: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80',
+    photo: require('../../assets/images/maya.jpg'),
     goodKarmaPoints: 200,
     thankYouNotes: 40,
     status: 'Premium Member',
@@ -31,20 +30,24 @@ const profiles = [
     interests: ['Baking', 'Hiking', 'Animals'],
     location: '',
   },
+  {
+    id: '2',
+    name: 'Liam Nguyen',
+    username: '@liam_ng',
+    bio: 'Avid reader and thoughtful conversationalist.',
+    details: 'Software engineer with a passion for literature and meaningful discussions over coffee.',
+    photo: require('../../assets/images/liam.jpg'),
+    goodKarmaPoints: 120,
+    thankYouNotes: 15,
+    status: 'Active Member',
+    loveLanguages: ['Words of Affirmation', 'Quality Time'],
+    interests: ['Reading', 'Coffee', 'Technology'],
+  },
 ];
-
-const loveLanguageIcons = {
-  'Words of Affirmation': () => <AntDesign name="message1" size={20} color="white" />,
-  'Quality Time': () => <MaterialCommunityIcons name="clock-time-four" size={20} color="white" />,
-  'Receiving Gifts': () => <MaterialCommunityIcons name="gift" size={20} color="white" />,
-  'Acts of Service': () => <MaterialCommunityIcons name="hand-heart" size={20} color="white" />,
-  'Physical Touch': () => <MaterialCommunityIcons name="hand-wave" size={20} color="white" />,
-};
 
 export default function PotentialProfilesScreen() {
   const router = useRouter();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const profile = profiles[currentIndex];
 
   const nextProfile = () => {
     if (currentIndex < profiles.length - 1) setCurrentIndex(currentIndex + 1);
@@ -53,6 +56,8 @@ export default function PotentialProfilesScreen() {
     if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
   };
 
+  const profile = profiles[currentIndex];
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
@@ -60,14 +65,34 @@ export default function PotentialProfilesScreen() {
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
-      <Image
-        source={{ uri: profile.photo }}
-        style={styles.profileImage}
-        resizeMode="cover"
-      />
+      {/* Render all profile images but only show the current one */}
+      <View style={[styles.imageWrapper, { width: IMAGE_WIDTH, height: IMAGE_HEIGHT }]}>
+        {profiles.map((p, i) => {
+          const isVisible = i === currentIndex;
+          return (
+            <Image
+              key={p.id}
+              source={p.photo}
+              style={[
+                styles.profilephoto,
+                {
+                  width: IMAGE_WIDTH * 1.1,
+                  height: IMAGE_HEIGHT * 1.1,
+                  position: 'absolute',
+                  opacity: isVisible ? 1 : 0,
+                },
+              ]}
+              resizeMode="cover"
+              fadeDuration={0} // remove fade animation on load for instant switch
+              importantForAccessibility={isVisible ? 'yes' : 'no-hide-descendants'}
+              accessibilityElementsHidden={!isVisible}
+              accessibilityIgnoresInvertColors={!isVisible}
+            />
+          );
+        })}
+      </View>
 
       <View style={styles.profileCard}>
-        {/* Show name and username for profile with id=2 */}
         {profile.id === '2' ? (
           <Text style={styles.username}>
             {profile.name} ({profile.username})
@@ -76,7 +101,6 @@ export default function PotentialProfilesScreen() {
           <Text style={styles.username}>{profile.username}</Text>
         )}
 
-        {/* Good Karma and Thank You Containers */}
         <View style={styles.karmaContainer}>
           <View style={styles.karmaBox}>
             <Text style={styles.karmaLabel}>Good Karma Points</Text>
@@ -103,7 +127,6 @@ export default function PotentialProfilesScreen() {
           <View style={styles.loveLanguagesContainer}>
             {profile.loveLanguages.map((lang, idx) => (
               <View key={idx} style={styles.loveLanguageItem}>
-                {/* Using icons can be added here if you want */}
                 <Text style={styles.loveLanguageText}>{lang}</Text>
               </View>
             ))}
@@ -170,19 +193,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 6,
   },
-  profileImage: {
-    width: 300,
-    height: 300,
+  imageWrapper: {
     borderRadius: 16,
-    borderWidth: 3,
+    borderWidth: 1,
     borderColor: '#7C5B9D',
-    marginBottom: 20,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  profilephoto: {
+    borderRadius: 7,
+    transform: [{ scale: 1.1 }],
   },
   profileCard: {
     backgroundColor: '#7C5B9D',
     borderRadius: 16,
     padding: 20,
     width: '100%',
+    maxWidth: 500,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -272,6 +299,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+    maxWidth: 500,
     marginBottom: 25,
     paddingHorizontal: 10,
   },
