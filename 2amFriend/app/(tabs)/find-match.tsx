@@ -60,12 +60,13 @@ export default function PotentialProfilesScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/criteria-selection')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
 
-      {/* Render all profile images but only show the current one */}
+      {/* <Text style={styles.pageTitle}>Find Matches</Text> */}
+
       <View style={[styles.imageWrapper, { width: IMAGE_WIDTH, height: IMAGE_HEIGHT }]}>
         {profiles.map((p, i) => {
           const isVisible = i === currentIndex;
@@ -83,7 +84,7 @@ export default function PotentialProfilesScreen() {
                 },
               ]}
               resizeMode="cover"
-              fadeDuration={0} // remove fade animation on load for instant switch
+              fadeDuration={0}
               importantForAccessibility={isVisible ? 'yes' : 'no-hide-descendants'}
               accessibilityElementsHidden={!isVisible}
               accessibilityIgnoresInvertColors={!isVisible}
@@ -150,6 +151,10 @@ export default function PotentialProfilesScreen() {
           <Text style={styles.sectionTitle}>Interests</Text>
           <Text style={styles.text}>{profile.interests.join(', ')}</Text>
         </View>
+
+        <TouchableOpacity style={styles.matchButton}>
+          <Text style={styles.matchButtonText}>Connect with {profile.name.split(' ')[0]}</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.navigationButtons}>
@@ -182,11 +187,17 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
   },
+  pageTitle: {
+    fontSize: 26,
+    fontWeight: '700',
+    color: '#7C5B9D',
+    marginBottom: 15,
+  },
   backButton: {
     flexDirection: 'row',
     alignSelf: 'flex-start',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 8,
   },
   backText: {
     color: '#7C5B9D',
@@ -315,4 +326,17 @@ const styles = StyleSheet.create({
     color: '#7C5B9D',
     marginHorizontal: 6,
   },
+  matchButton: {
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  matchButtonText: {
+    color: '#7C5B9D',
+    fontSize: 16,
+    fontWeight: '700',
+  },
 });
+

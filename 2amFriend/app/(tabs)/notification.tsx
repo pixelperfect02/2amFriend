@@ -22,7 +22,7 @@ export default function NotificationsScreen() {
       </View>
 
       {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => router.push('/find-match')}>
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
         <Text style={styles.backText}>Back</Text>
       </TouchableOpacity>
