@@ -6,13 +6,22 @@ import {
   FlatList,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const options = [
+// Type for list items
+type OptionItem = {
+  text: string;
+  emoji: string;
+  suggested?: boolean;
+};
+
+// Main category list
+const fullOptions: OptionItem[] = [
   { text: 'Similar Struggles', emoji: '🤝' },
   { text: 'Similar Trauma', emoji: '💔' },
   { text: 'Similar Mental Health State', emoji: '🧠' },
@@ -22,8 +31,79 @@ const options = [
   { text: 'Have lost a family member or friend', emoji: '👼' },
 ];
 
+// Subcategory mapping
+const subcategoryMap: Record<string, OptionItem[]> = {
+  'Similar Struggles': [
+    { text: 'Job related', emoji: '💼' },
+    { text: 'Love life related', emoji: '💔' },
+    { text: 'Passion following related', emoji: '🔥' },
+    { text: 'Loneliness in a foreign place/Country', emoji: '🌏' },
+    { text: 'Marriage related', emoji: '💍' },
+    { text: 'Sexuality & sexual orientation', emoji: '🏳️‍🌈' },
+    { text: 'Career/Business not going well', emoji: '📉' },
+    { text: 'Physical disability', emoji: '🦽' },
+    { text: 'Debt related', emoji: '💸' },
+  ],
+  'Similar Trauma': [
+    { text: 'Bullying', emoji: '😢' },
+    { text: 'Community Violence / Racial Discrimination', emoji: '✊🏾' },
+    { text: 'Natural Disasters', emoji: '🌪️' },
+    { text: 'Partner violence', emoji: '💔' },
+    { text: 'Physical abuse', emoji: '👊' },
+    { text: 'Sexual abuse/assault', emoji: '🚫' },
+    { text: 'Military combat', emoji: '🎖️' },
+    { text: 'Emotional abuse', emoji: '🧠' },
+    { text: 'Prenatal/Postnatal trauma', emoji: '👶' },
+    { text: 'Intergenerational trauma', emoji: '🧬' },
+    { text: 'Childhood abuse/Neglect', emoji: '🧸' },
+    { text: 'Parents’ separation', emoji: '🏚️' },
+  ],
+  'Similar Mental Health State': [
+    { text: 'Depressed', emoji: '😞' },
+    { text: 'Stressed all the time', emoji: '😰' },
+    { text: 'Anxiety & Panic attacks', emoji: '😨' },
+    { text: 'PTSD', emoji: '🧠' },
+    { text: 'Grief phase', emoji: '🕊️' },
+    { text: 'Healed & in good state', emoji: '🌈' },
+    { text: 'Addiction (Alcohol / Drug / Sex)', emoji: '🍷' },
+    { text: 'Self-harm thoughts', emoji: '⚠️' },
+    { text: 'Phobias', emoji: '🕷️' },
+  ],
+  'Similar Culture': [
+    { text: 'Individualistic Cultures', emoji: '👤' },
+    { text: 'Family-oriented / Collectivistic Cultures', emoji: '👨‍👩‍👧‍👦' },
+  ],
+  'Similar Mindset': [
+    { text: 'Optimistic', emoji: '😊' },
+    { text: 'Pessimistic', emoji: '☹️' },
+    { text: 'Proactive', emoji: '⚡' },
+    { text: 'Reactive', emoji: '🔁' },
+    { text: 'Entrepreneurial', emoji: '💼' },
+    { text: 'Victim', emoji: '🙇' },
+    { text: 'Creator', emoji: '🎨' },
+    { text: 'Analytical', emoji: '📊' },
+    { text: 'Intuitive', emoji: '🌙' },
+    { text: 'Competitive', emoji: '🏁' },
+    { text: 'Collaborative', emoji: '🤝' },
+  ],
+  'Similar Life Experiences': [
+    { text: 'A traumatic event', emoji: '⚡' },
+    { text: 'Falling In Love', emoji: '❤️' },
+    { text: 'Heartbreak', emoji: '💔' },
+    { text: 'Having children', emoji: '👶' },
+    { text: 'Travelling', emoji: '✈️' },
+    { text: 'Personal goal achieved', emoji: '🏅' },
+    { text: 'Professional goal achieved', emoji: '💼' },
+    { text: 'Major health issue', emoji: '🏥' },
+    { text: 'Life-threatening events', emoji: '🚨' },
+    { text: 'Spiritual Awakening', emoji: '🧘‍♀️' },
+    { text: 'Rejection', emoji: '🚫' },
+  ],
+};
+
 export default function CriteriaSelectionScreen() {
   const [selected, setSelected] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
   const router = useRouter();
 
   const toggleSelection = (item: string) => {
@@ -34,17 +114,39 @@ export default function CriteriaSelectionScreen() {
     if (!selected) return;
 
     if (selected === 'Have lost a family member or friend') {
-      // Directly go to grief-form.tsx
       router.push('/grief-form');
     } else {
-      // Usual flow to topic-selection with selected category
       router.push({ pathname: '/topic-selection', params: { category: selected } });
     }
   };
 
+  const filteredOptions = (): OptionItem[] => {
+    const lowerSearch = search.toLowerCase();
+
+    const directMatches = fullOptions.filter(option =>
+      option.text.toLowerCase().includes(lowerSearch)
+    );
+
+    const suggestedFromSub = Object.entries(subcategoryMap)
+      .filter(([_, subOptions]) =>
+        subOptions.some(sub => sub.text.toLowerCase().includes(lowerSearch))
+      )
+      .map(([category]) => ({
+        text: category,
+        emoji: fullOptions.find(o => o.text === category)?.emoji || '✨',
+        suggested: true,
+      }));
+
+    return [
+      ...directMatches,
+      ...suggestedFromSub.filter(
+        s => !directMatches.some(d => d.text === s.text)
+      ),
+    ];
+  };
+
   return (
     <View style={styles.container}>
-      {/* Back Arrow - Top Left */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => router.replace('/sign-up')}
@@ -53,7 +155,6 @@ export default function CriteriaSelectionScreen() {
         <AntDesign name="arrowleft" size={24} color="#7C5B9D" />
       </TouchableOpacity>
 
-      {/* Forward Arrow - Top Right */}
       <TouchableOpacity
         style={styles.forwardButton}
         onPress={handleForward}
@@ -71,9 +172,17 @@ export default function CriteriaSelectionScreen() {
       <Text style={styles.subheader}>What brings you here?</Text>
       <Text style={styles.subsubheader}>Choose 1 to continue</Text>
 
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search your reason for being here..."
+        placeholderTextColor="#aaa"
+        value={search}
+        onChangeText={setSearch}
+      />
+
       <FlatList
         contentContainerStyle={styles.listContainer}
-        data={options}
+        data={filteredOptions()}
         keyExtractor={(item) => item.text}
         renderItem={({ item }) => (
           <TouchableOpacity
@@ -89,7 +198,10 @@ export default function CriteriaSelectionScreen() {
                 selected === item.text && styles.optionTextSelected,
               ]}
             >
-              {item.emoji}  {item.text}
+              {item.emoji} {item.text}
+              {item.suggested && (
+                <Text style={{ fontSize: 14, color: 'white' }}> (Suggested)</Text>
+              )}
             </Text>
           </TouchableOpacity>
         )}
@@ -135,14 +247,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     color: '#7C5B9D',
-    marginBottom: 24,
+    marginBottom: 8,
   },
   subsubheader: {
     fontSize: 14,
     textAlign: 'center',
     color: '#7C5B9D',
-    marginTop: -15,
-    marginBottom: 32,
+    marginBottom: 16,
+  },
+  searchInput: {
+    backgroundColor: '#f2f2f2',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    marginBottom: 20,
+    fontSize: 16,
+    color: '#333',
   },
   listContainer: {
     paddingBottom: height * 0.1,

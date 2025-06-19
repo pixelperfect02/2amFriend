@@ -41,11 +41,12 @@ export default function UserProfile() {
   const [userData, setUserData] = useState(loggedInUser);
 
   const handleSettings = () => {
-    router.push('/');
+    router.push('/settings');
   };
+  
 
   const handleEditProfile = () => {
-    router.push('/');
+    router.push('/edit-profile');
   };
 
   const toggleShowName = () => {
@@ -130,7 +131,7 @@ export default function UserProfile() {
         <View style={styles.nameToggleContainer}>
           <Text style={styles.username}>{userData.username}</Text>
           <View style={styles.toggleContainer}>
-            <Text style={styles.toggleLabel}>Show Name</Text>
+            <Text style={styles.toggleLabel}>Show Name to everyone</Text>
             <Switch
               trackColor={{ false: '#767577', true: '#D6D3E9' }}
               thumbColor={showName ? '#f4f3f4' : '#f4f3f4'}
@@ -197,6 +198,7 @@ export default function UserProfile() {
           <Text style={styles.text}>{userData.interests.join(', ')}</Text>
         </View>
       </View>
+
 
       <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
         <Text style={styles.buttonText}>Edit Profile</Text>

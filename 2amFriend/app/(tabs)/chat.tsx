@@ -1,31 +1,44 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const matchedChats = [
   {
     id: '1',
-    name: 'Maya Patel',
+    username: 'maya_patel',
     lastMessage: 'Had a great time chatting!',
     timestamp: '2h ago',
   },
   {
     id: '2',
-    name: 'Liam Nguyen',
+    username: 'liam_nguyen',
     lastMessage: 'You read Murakami too? 👀',
     timestamp: '1d ago',
   },
   {
     id: '3',
-    name: 'Aria Chen',
+    username: 'aria_chen',
     lastMessage: 'Let’s plan that tea date soon ☕',
     timestamp: '3d ago',
   },
 ];
 
+// Randomly assign verified/unverified
+const getRandomVerifiedStatus = () => (Math.random() < 0.5 ? 'Verified' : 'Unverified');
+
 export default function ChatScreen() {
   const router = useRouter();
+
+  const [verificationStatuses, setVerificationStatuses] = useState<Record<string, 'Verified' | 'Unverified'>>({});
+
+  useEffect(() => {
+    const statuses: Record<string, 'Verified' | 'Unverified'> = {};
+    matchedChats.forEach(chat => {
+      statuses[chat.id] = getRandomVerifiedStatus();
+    });
+    setVerificationStatuses(statuses);
+  }, []);
 
   const handleChatPress = (chatId: string) => {
     router.push(`/`); // Change to specific chat route if needed
@@ -51,13 +64,21 @@ export default function ChatScreen() {
           data={matchedChats}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ paddingBottom: 40 }}
-          renderItem={({ item }) => (
-            <TouchableOpacity style={styles.card} onPress={() => handleChatPress(item.id)}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.message}>{item.lastMessage}</Text>
-              <Text style={styles.timestamp}>{item.timestamp}</Text>
-            </TouchableOpacity>
-          )}
+          renderItem={({ item }) => {
+            const status = verificationStatuses[item.id] || 'Unverified';
+            const statusColor = status === 'Verified' ? '#4CAF50' : '#E53935';
+
+            return (
+              <TouchableOpacity style={styles.card} onPress={() => handleChatPress(item.id)}>
+                <View style={styles.nameRow}>
+                  <Text style={styles.username}>@{item.username}</Text>
+                  <Text style={[styles.status, { color: statusColor }]}>{status}</Text>
+                </View>
+                <Text style={styles.message}>{item.lastMessage}</Text>
+                <Text style={styles.timestamp}>{item.timestamp}</Text>
+              </TouchableOpacity>
+            );
+          }}
         />
       )}
     </View>
@@ -104,11 +125,20 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
-  name: {
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  username: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 4,
+  },
+  status: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 10,
   },
   message: {
     fontSize: 15,

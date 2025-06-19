@@ -27,7 +27,8 @@ const subcategoryMap: Record<string, { text: string; emoji: string }[]> = {
   ],
   'Similar Trauma': [
     { text: 'Bullying', emoji: '😢' },
-    { text: 'Community Violence / Racial Discrimination', emoji: '✊🏾' },
+    { text: 'Community Violence', emoji: '⚔️' },
+    { text: 'Racial Discrimination', emoji: '✊🏾' },
     { text: 'Natural Disasters', emoji: '🌪️' },
     { text: 'Partner violence', emoji: '💔' },
     { text: 'Physical abuse', emoji: '👊' },
@@ -52,7 +53,7 @@ const subcategoryMap: Record<string, { text: string; emoji: string }[]> = {
   ],
   'Similar Culture': [
     { text: 'Individualistic Cultures', emoji: '👤' },
-    { text: 'Family-oriented / Collectivistic Cultures', emoji: '👨‍👩‍👧‍👦' },
+    { text: 'Family-oriented Cultures', emoji: '👨‍👩‍👧‍👦' },
   ],
   'Similar Mindset': [
     { text: 'Optimistic', emoji: '😊' },
@@ -82,6 +83,64 @@ const subcategoryMap: Record<string, { text: string; emoji: string }[]> = {
   ],
 };
 
+const definitions: Record<string, string> = {
+  'Job related': 'Issues related to your employment or workplace.',
+  'Love life related': 'Concerns about romantic relationships.',
+  'Passion following related': 'Challenges related to pursuing your passions or dreams.',
+  'Loneliness in a foreign place/Country': 'Feeling isolated or disconnected while living abroad.',
+  'Marriage related': 'Topics involving marriage or partnership.',
+  'Sexuality & sexual orientation': 'Topics concerning your sexual identity and preferences.',
+  'Career/Business not going well': 'Difficulties with your career or business.',
+  'Physical disability': 'Living with or managing a physical disability.',
+  'Debt related': 'Financial difficulties caused by debt.',
+  'Bullying': 'Being subjected to repeated aggressive behavior or harassment.',
+  'Community Violence': 'Experiences of violence community conflicts.',
+  'Racial Discrimination': 'Experiences of discrimination due to race.',
+  'Natural Disasters': 'Trauma related to events like floods, earthquakes, or storms.',
+  'Partner violence': 'Experiences of violence or abuse by a partner.',
+  'Physical abuse': 'Experiencing bodily harm inflicted by others.',
+  'Sexual abuse/assault': 'Experiencing unwanted sexual contact or assault.',
+  'Military combat': 'Trauma related to military service and combat situations.',
+  'Emotional abuse': 'Psychological maltreatment or manipulation.',
+  'Prenatal/Postnatal trauma': 'Trauma before or after birth.',
+  'Intergenerational trauma': 'Trauma passed down from previous generations.',
+  'Childhood abuse/Neglect': 'Abuse or neglect experienced during childhood.',
+  'Parents’ separation': 'Impact of parents divorcing or separating.',
+  'Depressed': 'Feeling very sad, hopeless, or lacking energy.',
+  'Stressed all the time': 'Constant feelings of stress and overwhelm.',
+  'Anxiety & Panic attacks': 'Episodes of intense fear and physical symptoms of anxiety.',
+  'PTSD': 'Post-Traumatic Stress Disorder, a condition triggered by traumatic events.',
+  'Grief phase': 'Stages of grieving a loss.',
+  'Healed & in good state': 'Feeling recovered and mentally well.',
+  'Addiction (Alcohol / Drug / Sex)': 'Dependence on substances or behaviors.',
+  'Self-harm thoughts': 'Thoughts of intentionally causing self-injury.',
+  'Phobias': 'Irrational fears of specific things or situations.',
+  'Individualistic Cultures': 'Cultures that emphasize individual goals and independence.',
+  'Family-oriented': 'Cultures that emphasize family and group goals.',
+  'Optimistic': 'Having a positive outlook on life.',
+  'Pessimistic': 'Tending to see the worst aspect of things.',
+  'Proactive': 'Taking initiative and controlling situations.',
+  'Reactive': 'Responding to events after they happen.',
+  'Entrepreneurial': 'Having a mindset to start and run businesses.',
+  'Victim': 'Feeling powerless or oppressed.',
+  'Creator': 'Someone who makes or innovates things.',
+  'Analytical': 'Using logical reasoning and data analysis.',
+  'Intuitive': 'Relying on gut feelings and instincts.',
+  'Competitive': 'Driven to outperform others.',
+  'Collaborative': 'Preferring to work with others.',
+  'A traumatic event': 'An experience causing severe emotional distress.',
+  'Falling In Love': 'Developing strong romantic feelings.',
+  'Heartbreak': 'Emotional pain from lost love.',
+  'Having children': 'Experiencing parenthood.',
+  'Travelling': 'Visiting new places and cultures.',
+  'Personal goal achieved': 'Accomplishing personal ambitions.',
+  'Professional goal achieved': 'Achieving career milestones.',
+  'Major health issue': 'Facing serious health challenges.',
+  'Life-threatening events': 'Events that threaten your life.',
+  'Spiritual Awakening': 'A profound shift in spiritual awareness.',
+  'Rejection': 'Being refused or excluded.',
+};
+
 export default function TopicSelectionScreen() {
   const { category } = useLocalSearchParams();
   const router = useRouter();
@@ -102,6 +161,11 @@ export default function TopicSelectionScreen() {
         setSelected(prev => [...prev, item]);
       }
     }
+  };
+
+  const showDefinition = (item: string) => {
+    const definition = definitions[item] || 'No definition available.';
+    Alert.alert(item, definition);
   };
 
   const handleNext = () => {
@@ -146,7 +210,6 @@ export default function TopicSelectionScreen() {
           : 'Pick 1–3 topics to continue'}
       </Text>
 
-      {/* Conditionally render subheading ONLY for "Similar Life Experiences" */}
       {category === 'Similar Life Experiences' && (
         <Text style={styles.lifeExperienceSubheading}>
           A life experience that changed your life:
@@ -156,17 +219,27 @@ export default function TopicSelectionScreen() {
       <FlatList
         contentContainerStyle={styles.listContainer}
         data={options}
-        keyExtractor={(item) => item.text}
+        keyExtractor={item => item.text}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.option, selected.includes(item.text) && styles.optionSelected]}
             onPress={() => toggleSelection(item.text)}
           >
-            <Text
-              style={[styles.optionText, selected.includes(item.text) && styles.optionTextSelected]}
-            >
-              {item.emoji}  {item.text}
-            </Text>
+            <View style={styles.optionRow}>
+              <Text
+                style={[styles.optionText, selected.includes(item.text) && styles.optionTextSelected]}
+              >
+                {item.emoji}  {item.text}
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => showDefinition(item.text)}
+                style={styles.infoButton}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Text style={styles.infoButtonText}>i</Text>
+              </TouchableOpacity>
+            </View>
           </TouchableOpacity>
         )}
         showsVerticalScrollIndicator={false}
@@ -233,6 +306,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#D6D3E9',
     borderColor: '#7C5B9D',
   },
+  optionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   optionText: {
     fontSize: 18,
     color: 'white',
@@ -240,5 +318,19 @@ const styles = StyleSheet.create({
   optionTextSelected: {
     fontWeight: 'bold',
     color: 'white',
+  },
+  infoButton: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    width: 22,
+    height: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoButtonText: {
+    color: '#7C5B9D',
+    fontWeight: 'bold',
+    fontSize: 16,
+    lineHeight: 16,
   },
 });

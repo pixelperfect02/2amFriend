@@ -67,7 +67,14 @@ export default function PotentialProfilesScreen() {
       />
 
       <View style={styles.profileCard}>
-        <Text style={styles.username}>{profile.username}</Text>
+        {/* Show name and username for profile with id=2 */}
+        {profile.id === '2' ? (
+          <Text style={styles.username}>
+            {profile.name} ({profile.username})
+          </Text>
+        ) : (
+          <Text style={styles.username}>{profile.username}</Text>
+        )}
 
         {/* Good Karma and Thank You Containers */}
         <View style={styles.karmaContainer}>
@@ -96,6 +103,7 @@ export default function PotentialProfilesScreen() {
           <View style={styles.loveLanguagesContainer}>
             {profile.loveLanguages.map((lang, idx) => (
               <View key={idx} style={styles.loveLanguageItem}>
+                {/* Using icons can be added here if you want */}
                 <Text style={styles.loveLanguageText}>{lang}</Text>
               </View>
             ))}

@@ -1,48 +1,53 @@
 import { AntDesign } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const savedProfiles = [
+const likedProfiles = [
   {
-    id: '1',
-    name: 'Liam Nguyen',
-    age: 28,
+    id: 'user_001',
     bio: 'Coffee lover & deep thinker.',
     details: 'Engineer by day, philosopher by night. Always looking for the next great book and conversation.',
   },
   {
-    id: '2',
-    name: 'Maya Patel',
-    age: 25,
+    id: 'user_002',
     bio: 'Dog mom & nature girl.',
     details: 'Vegan baker and weekend hiker. Bonus points if you love animals and campfires.',
   },
   {
-    id: '3',
-    name: 'Ethan Ross',
-    age: 32,
+    id: 'user_003',
     bio: 'Podcaster & mystery nerd.',
     details: 'I make cyber-sec boring stories sound cool. Ask me about the dark web… or tacos.',
   },
   {
-    id: '4',
-    name: 'Zara Ahmed',
-    age: 29,
+    id: 'user_004',
     bio: 'Painter of walls & souls.',
     details: 'Traveling muralist. My love language is playlists and rooftop sunsets.',
   },
   {
-    id: '5',
-    name: 'Chris Johnson',
-    age: 30,
+    id: 'user_005',
     bio: 'Adrenaline junkie.',
     details: 'Rock climber, skydiver, deep thinker. Let’s chase sunrises together.',
   },
 ];
 
-export default function SavedProfilesScreen() {
+// Helper to randomly assign verified status
+const getRandomVerifiedStatus = () => (Math.random() < 0.5 ? 'Verified' : 'Unverified');
+
+export default function LikesYouScreen() {
   const router = useRouter();
+
+  // Store verified status for each user id
+  const [verificationStatuses, setVerificationStatuses] = useState<Record<string, 'Verified' | 'Unverified'>>({});
+
+  useEffect(() => {
+    // Assign random verified/unverified to each user once on mount
+    const statuses: Record<string, 'Verified' | 'Unverified'> = {};
+    likedProfiles.forEach(profile => {
+      statuses[profile.id] = getRandomVerifiedStatus();
+    });
+    setVerificationStatuses(statuses);
+  }, []);
 
   const handleProfileClick = (profileId: string) => {
     console.log(`Navigate to profile with id: ${profileId}`);
@@ -51,9 +56,9 @@ export default function SavedProfilesScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header Container */}
+      {/* Header */}
       <View style={styles.headerContainer}>
-        <Text style={styles.headerTitle}>Saved Profiles</Text>
+        <Text style={styles.headerTitle}>Likes You</Text>
       </View>
 
       {/* Back Button */}
@@ -63,18 +68,24 @@ export default function SavedProfilesScreen() {
       </TouchableOpacity>
 
       <FlatList
-        data={savedProfiles}
+        data={likedProfiles}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 40 }}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.card} onPress={() => handleProfileClick(item.id)}>
-            <Text style={styles.name}>
-              {item.name}, {item.age}
-            </Text>
-            <Text style={styles.bio}>{item.bio}</Text>
-            <Text style={styles.details}>{item.details}</Text>
-          </TouchableOpacity>
-        )}
+        renderItem={({ item }) => {
+          const status = verificationStatuses[item.id] || 'Unverified';
+          const statusColor = status === 'Verified' ? '#4CAF50' : '#E53935'; // Green or Red
+
+          return (
+            <TouchableOpacity style={styles.card} onPress={() => handleProfileClick(item.id)}>
+              <View style={styles.idRow}>
+                <Text style={styles.name}>{item.id}</Text>
+                <Text style={[styles.status, { color: statusColor }]}>{status}</Text>
+              </View>
+              <Text style={styles.bio}>{item.bio}</Text>
+              <Text style={styles.details}>{item.details}</Text>
+            </TouchableOpacity>
+          );
+        }}
       />
     </View>
   );
@@ -120,11 +131,20 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 4,
   },
+  idRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
   name: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
-    marginBottom: 6,
+  },
+  status: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 10,
   },
   bio: {
     fontSize: 16,
